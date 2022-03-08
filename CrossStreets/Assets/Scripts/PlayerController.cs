@@ -4,21 +4,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    enum PlayerState
-    {
-        Idle,
-        Die,
-        ReadyJump,
-    }
-
-    enum PlayerDir
-    {
-        Forward = 0,
-        Back = 180,
-        Right = 90,
-        Left = -90,
-    }
-
     private PlayerState _state = PlayerState.Idle;
     private PlayerDir _dir = PlayerDir.Forward;
 
@@ -94,9 +79,9 @@ public class PlayerController : MonoBehaviour
         bool _isJumpEnd = false;
 
         Vector3 _startPosA = transform.position;
-        Vector3 _startPosB = transform.position + new Vector3(0 , 10, 5);
-        Vector3 _destPosA = transform.position + new Vector3(0, 10, 20);
-        Vector3 _destPosB = transform.position + new Vector3(0, 0, 20);
+        Vector3 _startPosB = transform.position + new Vector3(0 , 10, 3);
+        Vector3 _destPosA = transform.position + new Vector3(0, 10, 7);
+        Vector3 _destPosB = transform.position + new Vector3(0, 0, 10);
 
         while (_isJumpEnd == false)
         {

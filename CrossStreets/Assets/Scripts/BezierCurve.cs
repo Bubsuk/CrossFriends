@@ -4,7 +4,6 @@ using UnityEngine;
 
 public static class BezierCurve
 {
- 
     public static Vector3 Bezier(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float elapsedTime, float durationTime)
     {
 
