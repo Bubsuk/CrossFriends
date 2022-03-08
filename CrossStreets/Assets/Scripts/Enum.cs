@@ -16,9 +16,9 @@ enum PlayerDir
 
 public enum TileType
 {
-    Road,
-    Water,
-    Rail,
-    Grass,
+    Grass = 0,
+    Road = 1,
+    Water = 2,
+    Rail = 3,
     DarkGrass,
 }

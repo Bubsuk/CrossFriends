@@ -5,7 +5,20 @@ using UnityEngine;
 public class TileLine : MonoBehaviour
 {
     [SerializeField]
+    private TileType _tileType;
+    [SerializeField]
     private float _moveSpeed = 5f;
+    public TileType Type
+    {
+        get { return _tileType; }
+        set { _tileType = value; }
+    }
+
+    public void Initialize(TileType type)
+    {
+        _tileType = type;
+        gameObject.SetActive(false);
+    }
 
     void Update()
     {

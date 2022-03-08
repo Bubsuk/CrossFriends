@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7828116061249248062}
   - component: {fileID: 8316972942922929100}
   - component: {fileID: 8778562209337266366}
-  - component: {fileID: 1291154919440812757}
+  - component: {fileID: 2429022260791513843}
   m_Layer: 0
   m_Name: DarkGrass
   m_TagString: Untagged
@@ -96,7 +96,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1291154919440812757
+--- !u!114 &2429022260791513843
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,4 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d6639efac0b4824bb7b1dc15817f197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _creationWeightMin: 0
+  _creationWeightMax: 0
   _moveSpeed: 5

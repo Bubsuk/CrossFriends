@@ -2,58 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapConstructor : MonoBehaviour
+[System.Serializable]
+public class TileInfo
 {
-    [System.Serializable]
-    public class TileLine
+    [SerializeField]
+    private int _creationWeightMin;
+    [SerializeField]
+    private int _creationWeightMax;
+   
+    public int MaxWeight
     {
-        [SerializeField] private GameObject _tilePrefab;
-        private TileType _tileType;
-        private int _creationWeightMin;
-        private int _creationWeightMax;
-
-        public GameObject tile
-        {
-            get { return _tilePrefab; }
-            set { _tilePrefab = value; }
-        }
-        public TileType type
-        {
-            get { return _tileType; }
-            set { _tileType = value; }
-        }
-        public  int maxWeight
-        {
-            get { return _creationWeightMax; }
-            set { _creationWeightMax = value; }
-        }
-        public int minWeight
-        {
-            get { return _creationWeightMin; }
-            set { _creationWeightMin = value; }
-        }
-
+        get { return _creationWeightMax; }
+        set { _creationWeightMax = value; }
     }
 
+    public int MinWeight
+    {
+        get { return _creationWeightMin; }
+        set { _creationWeightMin = value; }
+    }
+}
+
+public class MapConstructor : MonoBehaviour
+{
+    [SerializeField]
+    List<TileInfo> _tilesInfo;
 
     [SerializeField]
-    TileLine _grassPrefab;
+    private TileLine _grassPrefab;
     [SerializeField]
-    TileLine _darkGrassPrefab;
+    private TileLine _darkGrassPrefab;
     [SerializeField]
-    TileLine _roadPrefab;
+    private TileLine _roadPrefab;
     [SerializeField]
-    TileLine _waterPrefab;
+    private TileLine _waterPrefab;
     [SerializeField]
-    TileLine _railPrefab;
+    private TileLine _railPrefab;
 
-    Queue<TileLine> _grassQueue = new Queue<TileLine>();
-    Queue<TileLine> _roadQueue = new Queue<TileLine>();
-    Queue<TileLine> _waterQueue = new Queue<TileLine>();
-    Queue<TileLine> _railQueue = new Queue<TileLine>();
+    private Queue<TileLine> _grassQueue = new Queue<TileLine>();
+    private Queue<TileLine> _roadQueue = new Queue<TileLine>();
+    private Queue<TileLine> _waterQueue = new Queue<TileLine>();
+    private Queue<TileLine> _railQueue = new Queue<TileLine>();
 
     private Vector3 _poolPos = new Vector3(0, 0, 160);
     private Vector3 _endPos = new Vector3(0, 0, -40);
+
+    bool _isDestroy = false;
 
     private void Initialize()
     {
@@ -79,19 +73,24 @@ public class MapConstructor : MonoBehaviour
         switch (type)
         {
             case TileType.Grass:
-                newTile = Instantiate(_grassPrefab.tile, _poolPos, Quaternion.identity).GetComponent<TileLine>();
+                newTile = Instantiate(_grassPrefab, _poolPos, Quaternion.identity);
+                newTile.Initialize(type);
                 return newTile;
             case TileType.DarkGrass:
-                newTile = Instantiate(_darkGrassPrefab.tile, _poolPos, Quaternion.identity).GetComponent<TileLine>();
+                newTile = Instantiate(_darkGrassPrefab, _poolPos, Quaternion.identity);
+                newTile.Initialize(type);
                 return newTile;
             case TileType.Rail:
-                newTile = Instantiate(_railPrefab.tile, _poolPos, Quaternion.identity).GetComponent<TileLine>();
+                newTile = Instantiate(_railPrefab, _poolPos, Quaternion.identity);
+                newTile.Initialize(type);
                 return newTile;
             case TileType.Road:
-                newTile = Instantiate(_roadPrefab.tile, _poolPos, Quaternion.identity).GetComponent<TileLine>();
+                newTile = Instantiate(_roadPrefab, _poolPos, Quaternion.identity);
+                newTile.Initialize(type);
                 return newTile;
             case TileType.Water:
-                newTile = Instantiate(_waterPrefab.tile, _poolPos, Quaternion.identity).GetComponent<TileLine>();
+                newTile = Instantiate(_waterPrefab, _poolPos, Quaternion.identity);
+                newTile.Initialize(type);
                 return newTile;
             default:
                 break;
@@ -154,19 +153,19 @@ public class MapConstructor : MonoBehaviour
 
     void ReturnTile(TileLine Tile)
     {
-        if(Tile.type == TileType.Grass && Tile.type == TileType.DarkGrass)
+        if(Tile.Type == TileType.Grass && Tile.Type == TileType.DarkGrass)
         {
             _grassQueue.Enqueue(Tile);
         }
-        else if (Tile.type == TileType.Rail)
+        else if (Tile.Type == TileType.Rail)
         {
             _railQueue.Enqueue(Tile);
         }
-        else if (Tile.type == TileType.Road)
+        else if (Tile.Type == TileType.Road)
         {
             _roadQueue.Enqueue(Tile);
         }
-        else if (Tile.type == TileType.Water)
+        else if (Tile.Type == TileType.Water)
         {
             _waterQueue.Enqueue(Tile);
         }
@@ -174,25 +173,25 @@ public class MapConstructor : MonoBehaviour
 
     private void Awake()
     {
-        _grassPrefab.type = TileType.Grass;
-        _grassPrefab.maxWeight = 5;
-        _grassPrefab.minWeight = 1;
+        //_grassPrefab. = TileType.Grass;
+        //_grassPrefab.maxWeight = 5;
+        //_grassPrefab.minWeight = 1;
 
-        _darkGrassPrefab.type = TileType.Grass;
-        _darkGrassPrefab.maxWeight = 5;
-        _darkGrassPrefab.minWeight = 1;
+        //_darkGrassPrefab.type = TileType.Grass;
+        //_darkGrassPrefab.maxWeight = 5;
+        //_darkGrassPrefab.minWeight = 1;
 
-        _roadPrefab.type = TileType.Road;
-        _roadPrefab.maxWeight = 3;
-        _roadPrefab.minWeight = 1;
+        //_roadPrefab.type = TileType.Road;
+        //_roadPrefab.maxWeight = 3;
+        //_roadPrefab.minWeight = 1;
 
-        _waterPrefab.type = TileType.Water;
-        _waterPrefab.maxWeight = 2;
-        _waterPrefab.minWeight = 1;
+        //_waterPrefab.type = TileType.Water;
+        //_waterPrefab.maxWeight = 2;
+        //_waterPrefab.minWeight = 1;
 
-        _railPrefab.type = TileType.Rail;
-        _railPrefab.maxWeight = 2;
-        _railPrefab.minWeight = 1;
+        //_railPrefab.type = TileType.Rail;
+        //_railPrefab.maxWeight = 2;
+        //_railPrefab.minWeight = 1;
 
         Initialize();
     }
@@ -203,19 +202,27 @@ public class MapConstructor : MonoBehaviour
     }
     void Update()
     {
-        int cnt = 0;
-        while(true)
+        if(_isDestroy == true)
         {
-            if(cnt > 4)
+            switch (Random.Range(0, 3))
             {
-                cnt = 0;
+                case 0:
+                    GetTile(TileType.Grass).gameObject.SetActive(true);
+                    break;
+                case 1:
+                    GetTile(TileType.Road).gameObject.SetActive(true);
+                    break;
+                case 2:
+                    GetTile(TileType.Water).gameObject.SetActive(true);
+                    break;
+                case 3:
+                    GetTile(TileType.Rail).gameObject.SetActive(true);
+                    break;
             }
-            if(cnt == 0)
-            {
 
-            }
-
-            ++cnt;
+            _isDestroy = true;
         }
+
+
     }
 }
