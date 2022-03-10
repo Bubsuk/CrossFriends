@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6110506824798350843}
   - component: {fileID: 4948151041965753314}
   - component: {fileID: 2346005979589676765}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Grass
-  m_TagString: Untagged
+  m_TagString: Tile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5676341791588872734}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 320, y: 1, z: 10}
+  m_LocalScale: {x: 200, y: 1, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tileType: 0
-  _creationWeightMin: 0
-  _creationWeightMax: 0
-  _moveSpeed: 5
+  _moveSpeed: 10
+  _isMove: 1
+  _prevTile: {fileID: 0}
+  _nextTile: {fileID: 0}

@@ -26,23 +26,44 @@ public class PlayerController : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.W))
         {
+            _dir = PlayerDir.Forward;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
+            _dir = PlayerDir.Back;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
+            _dir = PlayerDir.Left;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
+            _dir = PlayerDir.Right;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime));
+            switch(_dir)
+            {
+                case PlayerDir.Forward:
+                    _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4))); 
+                    break;
+                case PlayerDir.Back:
+                    _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
+                    break;
+                case PlayerDir.Right:
+                    _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(4, 0, 0)));
+                    break;
+                case PlayerDir.Left:
+                    _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-4, 0, 0)));
+                    break;
+                default:
+                    break;
+            }
+            
         }
     }
 
@@ -69,19 +90,18 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, (int)dir, 0), _elapsedTime / durationTime);
 
             yield return new WaitForSeconds(Time.deltaTime);
-            //ypwlield return null;
         }
     }
 
-    IEnumerator PlayerJump(float durationTime)
+    IEnumerator PlayerJump(float durationTime, Vector3 vertex1, Vector3 vertex2, Vector3 destination)
     {
         float _elapsedTime = 0f;
         bool _isJumpEnd = false;
 
         Vector3 _startPosA = transform.position;
-        Vector3 _startPosB = transform.position + new Vector3(0 , 10, 3);
-        Vector3 _destPosA = transform.position + new Vector3(0, 10, 7);
-        Vector3 _destPosB = transform.position + new Vector3(0, 0, 10);
+        Vector3 _startPosB = vertex1;
+        Vector3 _destPosA = vertex2;
+        Vector3 _destPosB = destination;
 
         while (_isJumpEnd == false)
         {

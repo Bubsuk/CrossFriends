@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 4603616854283238368}
   - component: {fileID: 2678040613911257573}
   - component: {fileID: -8977181724459373636}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Water
-  m_TagString: Untagged
+  m_TagString: Tile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 8005519311023955457}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 320, y: 1, z: 10}
+  m_LocalScale: {x: 200, y: 1, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -108,6 +108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d6639efac0b4824bb7b1dc15817f197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _creationWeightMin: 0
-  _creationWeightMax: 0
-  _moveSpeed: 5
+  _tileType: 0
+  _moveSpeed: 10
+  _isMove: 1
+  _prevTile: {fileID: 0}
+  _nextTile: {fileID: 0}

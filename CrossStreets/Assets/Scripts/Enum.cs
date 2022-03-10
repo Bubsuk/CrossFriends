@@ -20,5 +20,5 @@ public enum TileType
     Road = 1,
     Water = 2,
     Rail = 3,
-    DarkGrass,
+    DarkGrass = 4,
 }

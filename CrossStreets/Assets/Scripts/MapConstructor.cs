@@ -40,27 +40,36 @@ public class MapConstructor : MonoBehaviour
     private TileLine _railPrefab;
 
     private Queue<TileLine> _grassQueue = new Queue<TileLine>();
+    private Queue<TileLine> _darkGrassQueue = new Queue<TileLine>();
     private Queue<TileLine> _roadQueue = new Queue<TileLine>();
     private Queue<TileLine> _waterQueue = new Queue<TileLine>();
     private Queue<TileLine> _railQueue = new Queue<TileLine>();
 
-    private Vector3 _poolPos = new Vector3(0, 0, 160);
-    private Vector3 _endPos = new Vector3(0, 0, -40);
+    private Queue<TileType> _sequenceTileType = new Queue<TileType>();
 
-    bool _isDestroy = false;
+    private Vector3 _spawnPos = new Vector3(0, 0, 160);
+
+    private TileLine _lastTileLine;
+
+    [SerializeField]
+    private int _tileSize = 4;
+    [SerializeField]
+    private int _startTileAmount = 30;
+    private TileLine[] _startTile = new TileLine[30];
+
+    
 
     private void Initialize()
     {
-        for (int i = 0; i < 20; ++i)
+        while(_sequenceTileType.Count < _startTileAmount)
         {
-            if (i % 2 == 0)
-            {
-                _grassQueue.Enqueue(CreateTileLine(TileType.Grass));
-            }
-            else
-            {
-                _grassQueue.Enqueue(CreateTileLine(TileType.DarkGrass));
-            }
+            TileSequenceMaker();
+        }
+
+        for (int i = 0; i < 15; ++i)
+        {
+            _grassQueue.Enqueue(CreateTileLine(TileType.Grass));
+            _darkGrassQueue.Enqueue(CreateTileLine(TileType.DarkGrass));
             _roadQueue.Enqueue(CreateTileLine(TileType.Road));
             _waterQueue.Enqueue(CreateTileLine(TileType.Water));
             _railQueue.Enqueue(CreateTileLine(TileType.Rail));
@@ -73,23 +82,23 @@ public class MapConstructor : MonoBehaviour
         switch (type)
         {
             case TileType.Grass:
-                newTile = Instantiate(_grassPrefab, _poolPos, Quaternion.identity);
+                newTile = Instantiate(_grassPrefab, _spawnPos, Quaternion.identity);
                 newTile.Initialize(type);
                 return newTile;
             case TileType.DarkGrass:
-                newTile = Instantiate(_darkGrassPrefab, _poolPos, Quaternion.identity);
+                newTile = Instantiate(_darkGrassPrefab, _spawnPos, Quaternion.identity);
                 newTile.Initialize(type);
                 return newTile;
             case TileType.Rail:
-                newTile = Instantiate(_railPrefab, _poolPos, Quaternion.identity);
+                newTile = Instantiate(_railPrefab, _spawnPos, Quaternion.identity);
                 newTile.Initialize(type);
                 return newTile;
             case TileType.Road:
-                newTile = Instantiate(_roadPrefab, _poolPos, Quaternion.identity);
+                newTile = Instantiate(_roadPrefab, _spawnPos, Quaternion.identity);
                 newTile.Initialize(type);
                 return newTile;
             case TileType.Water:
-                newTile = Instantiate(_waterPrefab, _poolPos, Quaternion.identity);
+                newTile = Instantiate(_waterPrefab, _spawnPos, Quaternion.identity);
                 newTile.Initialize(type);
                 return newTile;
             default:
@@ -108,6 +117,16 @@ public class MapConstructor : MonoBehaviour
                 if (_grassQueue.Count > 0)
                 {
                     newTile = _grassQueue.Dequeue();
+                }
+                else
+                {
+                    newTile = CreateTileLine(type);
+                }
+                return newTile;
+            case TileType.DarkGrass:
+                if (_grassQueue.Count > 0)
+                {
+                    newTile = _darkGrassQueue.Dequeue();
                 }
                 else
                 {
@@ -151,11 +170,75 @@ public class MapConstructor : MonoBehaviour
         return null;
     }
 
-    void ReturnTile(TileLine Tile)
+    int tempWeight = 0;
+    private void TileSequenceMaker()
     {
-        if(Tile.Type == TileType.Grass && Tile.Type == TileType.DarkGrass)
+        // _tilesInfo[0] = grass
+        // _tilesInfo[1] = road
+        // _tilesInfo[2] = water
+        // _tilesInfo[3] = rail
+
+        int _weightRand = Random.Range(0, 4);
+        
+        while(_weightRand == tempWeight)
+        {
+            _weightRand = Random.Range(0, 4);
+        }
+
+        int rand;
+        switch (_weightRand)
+        {
+            case (int)TileType.Grass:
+                rand = Random.Range(_tilesInfo[0].MinWeight, _tilesInfo[0].MaxWeight);
+                for (int i = 0; i < rand; ++i)
+                {
+                    _sequenceTileType.Enqueue(TileType.Grass);
+                    _sequenceTileType.Enqueue(TileType.DarkGrass);
+                }
+                break;
+            case (int)TileType.Road:
+                rand = Random.Range(_tilesInfo[1].MinWeight, _tilesInfo[1].MaxWeight);
+                for (int i = 0; i < rand; ++i)
+                {
+                    _sequenceTileType.Enqueue(TileType.Road);
+                }
+                break;
+            case (int)TileType.Water:
+                rand = Random.Range(_tilesInfo[2].MinWeight, _tilesInfo[2].MaxWeight);
+                for (int i = 0; i < rand; ++i)
+                {
+                    _sequenceTileType.Enqueue(TileType.Water);
+                }
+                break;
+            case (int)TileType.Rail:
+                rand = Random.Range(_tilesInfo[3].MinWeight, _tilesInfo[3].MaxWeight);
+                for (int i = 0; i < rand; ++i)
+                {
+                    _sequenceTileType.Enqueue(TileType.Rail);
+                }
+                break;
+            default:
+                break;
+        }
+     
+        
+        tempWeight = _weightRand;
+
+    }
+
+
+
+
+    public void ReturnTile(TileLine Tile)
+    {
+        Tile.gameObject.SetActive(false);
+        if (Tile.Type == TileType.Grass)
         {
             _grassQueue.Enqueue(Tile);
+        }
+        else if (Tile.Type == TileType.DarkGrass)
+        {
+            _darkGrassQueue.Enqueue(Tile);
         }
         else if (Tile.Type == TileType.Rail)
         {
@@ -169,60 +252,76 @@ public class MapConstructor : MonoBehaviour
         {
             _waterQueue.Enqueue(Tile);
         }
+
+        SpawnTile();
+    }
+
+
+    void SpawnTile()
+    {
+        TileLine SpawnTile;
+        if(_sequenceTileType.Count <= 0)
+        {
+            TileSequenceMaker();
+        }
+        SpawnTile = GetTile(_sequenceTileType.Dequeue());
+        SpawnTile.transform.position = _lastTileLine.gameObject.transform.position + Vector3.forward * _tileSize;
+        SpawnTile.gameObject.SetActive(true);
+        _lastTileLine = SpawnTile;
+        SpawnTile._prevTile = _lastTileLine;
+        _lastTileLine._nextTile = SpawnTile;
     }
 
     private void Awake()
     {
-        //_grassPrefab. = TileType.Grass;
-        //_grassPrefab.maxWeight = 5;
-        //_grassPrefab.minWeight = 1;
-
-        //_darkGrassPrefab.type = TileType.Grass;
-        //_darkGrassPrefab.maxWeight = 5;
-        //_darkGrassPrefab.minWeight = 1;
-
-        //_roadPrefab.type = TileType.Road;
-        //_roadPrefab.maxWeight = 3;
-        //_roadPrefab.minWeight = 1;
-
-        //_waterPrefab.type = TileType.Water;
-        //_waterPrefab.maxWeight = 2;
-        //_waterPrefab.minWeight = 1;
-
-        //_railPrefab.type = TileType.Rail;
-        //_railPrefab.maxWeight = 2;
-        //_railPrefab.minWeight = 1;
-
         Initialize();
     }
 
     void Start()
     {
-
+        for (int i = 0; i < _startTileAmount; ++i)
+        {
+            if (0 <= i && i < 7)
+            {
+                if(i % 2 == 0)
+                {
+                    _startTile[i] = GetTile(TileType.Grass);
+                    _startTile[i].transform.position = new Vector3(0, 0, -10 + (i * _tileSize));
+                    _startTile[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    _startTile[i] = GetTile(TileType.DarkGrass);
+                    _startTile[i].transform.position = new Vector3(0, 0, -10 + (i * _tileSize));
+                    _startTile[i].gameObject.SetActive(true);
+                }
+                
+            }
+            else
+            {
+                _startTile[i] = GetTile(_sequenceTileType.Dequeue());
+                _startTile[i].transform.position = new Vector3(0, 0, -10 + (i * _tileSize));
+                _startTile[i].gameObject.SetActive(true);
+            }
+            if(i > 0)
+            {
+                _startTile[i]._prevTile = _startTile[i - 1];
+                _startTile[i - 1]._nextTile = _startTile[i];
+            }
+        }
+        _lastTileLine = _startTile[_startTileAmount - 1];
     }
     void Update()
     {
-        if(_isDestroy == true)
+
+        if(Input.GetMouseButtonDown(0))
         {
-            switch (Random.Range(0, 3))
+            for (int i = 0; i < _startTileAmount; ++i)
             {
-                case 0:
-                    GetTile(TileType.Grass).gameObject.SetActive(true);
-                    break;
-                case 1:
-                    GetTile(TileType.Road).gameObject.SetActive(true);
-                    break;
-                case 2:
-                    GetTile(TileType.Water).gameObject.SetActive(true);
-                    break;
-                case 3:
-                    GetTile(TileType.Rail).gameObject.SetActive(true);
-                    break;
+
             }
-
-            _isDestroy = true;
         }
-
-
+  
     }
+
 }
