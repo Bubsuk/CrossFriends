@@ -5,33 +5,24 @@ using UnityEngine;
 
 public class TileLine : MonoBehaviour
 {
-    [SerializeField]
-    private TileType _tileType;
+    public int[] _tileObstacle = new int[20];
+    public Obstacle[] _obstacleOwnThis = new Obstacle[20];
 
-    private  int[] _tileIndex = new int[20];
+    public int _obstacleCode;
+    public TileLine _prevTileLine;
 
-    // 연결 리스트처럼
-    public TileLine _prevTile = null;
-    public TileLine _nextTile = null;
+    private TileType _type;
 
     public TileType Type
     {
-        get { return _tileType; }
-        set { _tileType = value; }
+        get { return _type; }
+        set { _type = value; }
     }
 
     public void Initialize(TileType type)
     {
-        _tileType = type;
         gameObject.SetActive(false);
-        for(int  i = 0; i < 20; ++i)
-        {
-            if ((0 <= i && i < 5) || (15 <= i && i < 20))
-            {
-                _tileIndex[i] = 1;
-            }
-            // 길이 있으면서 장애물을 생성하기
-        }
+        _type = type;
     }
 
 }

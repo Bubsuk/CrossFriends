@@ -13,9 +13,11 @@ public class PlayerController : MonoBehaviour
     private float _rotateTime = 1f;
     [SerializeField]
     private float _jumpTime = 1f;
+    [SerializeField]
+    GameObject _destroyZone;
 
     Coroutine _rotateCoroutine = null;
-    Coroutine _jumpCoroutine = null;
+    private bool _isJump = false;
 
     void Start()
     {
@@ -24,7 +26,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.W))
+        _destroyZone.transform.position = transform.position - (Vector3.forward * 20f);
+
+        if (Input.GetKeyDown(KeyCode.W))
         {
             _dir = PlayerDir.Forward;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
@@ -44,27 +48,32 @@ public class PlayerController : MonoBehaviour
             _dir = PlayerDir.Right;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (_isJump == false)
         {
-            switch(_dir)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                case PlayerDir.Forward:
-                    _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4))); 
-                    break;
-                case PlayerDir.Back:
-                    _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
-                    break;
-                case PlayerDir.Right:
-                    _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(4, 0, 0)));
-                    break;
-                case PlayerDir.Left:
-                    _jumpCoroutine = StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-4, 0, 0)));
-                    break;
-                default:
-                    break;
+                _isJump = true;
+                switch (_dir)
+                {
+                    case PlayerDir.Forward:
+                        StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                        break;
+                    case PlayerDir.Back:
+                        StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
+                        break;
+                    case PlayerDir.Right:
+                        StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
+                        break;
+                    case PlayerDir.Left:
+                        StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
+                        break;
+                    default:
+                        break;
+                }
+
             }
-            
         }
+        
     }
 
     IEnumerator PlayerTurn(PlayerDir dir, float durationTime)
@@ -117,6 +126,8 @@ public class PlayerController : MonoBehaviour
 
             yield return null;
         }
+
+        _isJump = false;
     }
 
    

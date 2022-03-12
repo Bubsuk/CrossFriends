@@ -4,6 +4,17 @@ using UnityEngine;
 
 public static class BezierCurve
 {
+    public static Vector3 ReviseCam(Vector3 a, Vector3 b, Vector3 c, float elapsedTime, float durationTime)
+    {
+
+        Vector3 _pointA = Vector3.Lerp(a, b, elapsedTime / durationTime);
+        Vector3 _pointB = Vector3.Lerp(b, c, elapsedTime / durationTime);
+
+        Vector3 _pointD = Vector3.Lerp(_pointA, _pointB, elapsedTime / durationTime);
+
+        return _pointD;
+    }
+
     public static Vector3 Bezier(Vector3 a, Vector3 b, Vector3 c, Vector3 d, float elapsedTime, float durationTime)
     {
 

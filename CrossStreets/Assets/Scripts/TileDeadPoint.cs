@@ -5,16 +5,25 @@ using UnityEngine;
 public class TileDeadPoint : MonoBehaviour
 {
     [SerializeField]
-    MapConstructor MapCreator;
+    private MapConstructor MapCreator;
     [SerializeField]
     private float _moveSpeed = 5f;
+    [SerializeField]
+    private GameObject _player;
 
     private const string TAG_Finish = "Tile";
     private readonly int TILE_LAYER = 3;
 
     private void Update()
     {
-        transform.position += Vector3.forward * _moveSpeed * Time.deltaTime;
+        if(_player.transform.position.z - transform.position.z > 10f)
+        {
+            transform.position += Vector3.forward * _moveSpeed * Time.deltaTime * 10f;
+        }
+        else
+        {
+            transform.position += Vector3.forward * _moveSpeed * Time.deltaTime;
+        }
     }
     private void OnTriggerExit(Collider other)
     {
