@@ -6,6 +6,7 @@ public class MoveObstacle : MonoBehaviour
 {
     private float _moveSpeed;
     private bool _isLeftToRight = false;
+    private System.Action<MoveObstacle> _onReturnObstacle;
 
     private Vector3 _spawnPos;
 
@@ -30,10 +31,9 @@ public class MoveObstacle : MonoBehaviour
         set { _type = value; }
     }
 
-    public void Initialize(ObstacleType type)
+    public void Initialize(System.Action<MoveObstacle> returnObstacle)
     {
-        gameObject.SetActive(false);
-        _type = type;
+        _onReturnObstacle = returnObstacle;
     }
 
     void Update()
@@ -41,10 +41,18 @@ public class MoveObstacle : MonoBehaviour
         if (_isLeftToRight == true)
         {
             transform.position += Vector3.right * _moveSpeed * Time.deltaTime;
+            if(transform.position.x >= 85f)
+            {
+                _onReturnObstacle(this);
+            }
         }
         else
         {
             transform.position += Vector3.left * _moveSpeed * Time.deltaTime;
+            if (transform.position.x <= -85f)
+            {
+                _onReturnObstacle(this);
+            }
         }
     }
 }

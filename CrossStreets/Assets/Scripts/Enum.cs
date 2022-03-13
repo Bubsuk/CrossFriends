@@ -30,6 +30,7 @@ public enum ObstacleType
 
     ShortTree = 6,
     Tree = 7,
+
     Dragon1 = 8,
     Dragon2 = 9,
     FloatingLog = 10,

@@ -123,6 +123,81 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &107072651
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 107072655}
+  - component: {fileID: 107072654}
+  - component: {fileID: 107072652}
+  - component: {fileID: 107072653}
+  m_Layer: 0
+  m_Name: LeftDestroyTile
+  m_TagString: Finish
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!54 &107072652
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107072651}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
+--- !u!114 &107072653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107072651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5280c92440769db469cdf5f5e8bb386d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mapCreator: {fileID: 339020642}
+--- !u!65 &107072654
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107072651}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 15, z: 150}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &107072655
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107072651}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -110, y: 0, z: 85}
+  m_LocalScale: {x: 1, y: 1, z: 1.7866}
+  m_Children: []
+  m_Father: {fileID: 320720281}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &320720279
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,7 +240,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -35}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 608933893}
+  - {fileID: 107072655}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -246,6 +323,8 @@ MonoBehaviour:
   _roadLinePrefab: {fileID: 7130657353261816586, guid: b40c2100265e4b14db0ddab19e54cba9, type: 3}
   _dragon1Prefab: {fileID: 6050309889252518124, guid: 3140943fe59865544a622c4bb27280b2, type: 3}
   _dragon2Prefab: {fileID: 3271034228883155583, guid: 3fdcd10a3a355844fa2616356b1404b9, type: 3}
+  _floatingLogPrefab: {fileID: 2008265412416927198, guid: 25188d9d1a87a44488ca7e927dd27470, type: 3}
+  _trainPrefab: {fileID: 3562213760862666678, guid: 29d31a767d1fab9468e7ba1ecc9449ff, type: 3}
   _treePrefab: {fileID: 8533242645182816099, guid: 590bdbbaead72d44f82be3bbd8e5ad56, type: 3}
   _shortTreePrefab: {fileID: 5604279124009060043, guid: bb987457df359644ba134d32a029d313, type: 3}
   _tileSize: 4
@@ -374,6 +453,81 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bc0756045f17966408872aebaeece0bc, type: 3}
+--- !u!1 &608933889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 608933893}
+  - component: {fileID: 608933892}
+  - component: {fileID: 608933890}
+  - component: {fileID: 608933891}
+  m_Layer: 0
+  m_Name: RightDestroyTile
+  m_TagString: Finish
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!54 &608933890
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608933889}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
+--- !u!114 &608933891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608933889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5280c92440769db469cdf5f5e8bb386d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mapCreator: {fileID: 339020642}
+--- !u!65 &608933892
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608933889}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 15, z: 150}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &608933893
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608933889}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 110, y: 0, z: 85}
+  m_LocalScale: {x: 1, y: 1, z: 1.7866}
+  m_Children: []
+  m_Father: {fileID: 320720281}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

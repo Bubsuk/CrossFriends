@@ -52,6 +52,8 @@ public class MapConstructor : MonoBehaviour
     [SerializeField]
     private MoveObstacle _floatingLogPrefab;
     [SerializeField]
+    private MoveObstacle _trainPrefab;
+    [SerializeField]
     private Obstacle _treePrefab;
     [SerializeField]
     private Obstacle _shortTreePrefab;
@@ -82,7 +84,7 @@ public class MapConstructor : MonoBehaviour
     private MoveObstaclePool _dragon1Pool = new MoveObstaclePool();
     private MoveObstaclePool _dragon2Pool = new MoveObstaclePool();
     private MoveObstaclePool _floatingLogPool = new MoveObstaclePool();
-
+    private MoveObstaclePool _trainPool = new MoveObstaclePool();
 
     private ObstacleObjPool _treePool = new ObstacleObjPool();
     private ObstacleObjPool _shortTreePool = new ObstacleObjPool();
@@ -102,19 +104,21 @@ public class MapConstructor : MonoBehaviour
 
         for(int i = 0; i < 15; ++i)
         {
-            _grassPool.TileInit(_grassPrefab, TileType.Grass, GetMoveObstacle);
-            _darkGrassPool.TileInit(_darkGrassPrefab, TileType.DarkGrass, GetMoveObstacle);
-            _roadPool.TileInit(_roadPrefab, TileType.Road, GetMoveObstacle);
-            _waterPool.TileInit(_waterPrefab, TileType.Water, GetMoveObstacle);
-            _railPool.TileInit(_railPrefab, TileType.Rail, GetMoveObstacle);
-            _roadLinePool.TileInit(_roadLinePrefab, TileType.RoadLine, GetMoveObstacle);
+            _grassPool.TileInit(_grassPrefab, TileType.Grass, GetMoveObstacle, ReturnMoveObstacle);
+            _darkGrassPool.TileInit(_darkGrassPrefab, TileType.DarkGrass, GetMoveObstacle, ReturnMoveObstacle);
+            _roadPool.TileInit(_roadPrefab, TileType.Road, GetMoveObstacle, ReturnMoveObstacle);
+            _waterPool.TileInit(_waterPrefab, TileType.Water, GetMoveObstacle, ReturnMoveObstacle);
+            _railPool.TileInit(_railPrefab, TileType.Rail, GetMoveObstacle, ReturnMoveObstacle);
+            _roadLinePool.TileInit(_roadLinePrefab, TileType.RoadLine, GetMoveObstacle, ReturnMoveObstacle);
         }
 
         for (int i = 0; i < 400; ++i)
         {
             _dragon1Pool.MoveObstacleInit(_dragon1Prefab, ObstacleType.Dragon1);
             _dragon2Pool.MoveObstacleInit(_dragon2Prefab, ObstacleType.Dragon2);
-            _floatingLogPool.MoveObstacleInit(_floatingLogPrefab, ObstacleType.Dragon2);
+            _floatingLogPool.MoveObstacleInit(_floatingLogPrefab, ObstacleType.FloatingLog);
+            _trainPool.MoveObstacleInit(_trainPrefab, ObstacleType.Train);
+
             _treePool.ObstacleInit(_treePrefab, ObstacleType.Tree);
             _shortTreePool.ObstacleInit(_shortTreePrefab, ObstacleType.ShortTree);
         }
@@ -129,6 +133,7 @@ public class MapConstructor : MonoBehaviour
         _moveObstacleQueue.Add(ObstacleType.Dragon1, _dragon1Pool);
         _moveObstacleQueue.Add(ObstacleType.Dragon2, _dragon2Pool);
         _moveObstacleQueue.Add(ObstacleType.FloatingLog, _floatingLogPool);
+        _moveObstacleQueue.Add(ObstacleType.Train, _trainPool);
 
         _obstacleQueue.Add(ObstacleType.Tree, _treePool);
         _obstacleQueue.Add(ObstacleType.ShortTree, _shortTreePool);
@@ -241,6 +246,15 @@ public class MapConstructor : MonoBehaviour
             Debug.Log($"{obstacle.Type} 타입의 키가 없습니다");
         }
         _obstacleQueue[obstacle.Type].ReturnObstacle(obstacle); 
+    }
+
+    public void ReturnMoveObstacle(MoveObstacle obstacle)
+    {
+        if (!_moveObstacleQueue.ContainsKey(obstacle.Type))
+        {
+            Debug.Log($"{obstacle.Type} 타입의 키가 없습니다");
+        }
+        _moveObstacleQueue[obstacle.Type].ReturnMoveObstacle(obstacle);
     }
 
 

@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     GameObject _destroyZone;
 
+
     Coroutine _rotateCoroutine = null;
     private bool _isJump = false;
 
