@@ -2,21 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileDeadPoint : MonoBehaviour
+public class SideDeadLine : MonoBehaviour
 {
     [SerializeField]
     private MapConstructor _mapCreator;
     [SerializeField]
-    private float _moveSpeed = 5f;
+    private TileDeadPoint _mainDeadPoint;
+    [SerializeField]
+    private float _moveSpeed = 1f;
     [SerializeField]
     private GameObject _player;
 
-    private const string TAG_Finish = "Tile";
-    private readonly int TILE_LAYER = 3;
+    private const string TAG_Finish = "Obstacle";
+    private readonly int MOVE_OBSTACLE_LAYER = 7;
 
     private void Update()
     {
-        if(_player.transform.position.z - transform.position.z > 10f)
+        if (_player.transform.position.z - _mainDeadPoint.gameObject.transform.position.z > 10f)
         {
             transform.position += Vector3.forward * _moveSpeed * Time.deltaTime * 10f;
         }
@@ -24,12 +26,14 @@ public class TileDeadPoint : MonoBehaviour
         {
             transform.position += Vector3.forward * _moveSpeed * Time.deltaTime;
         }
+
+        
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == TILE_LAYER)
+        if (other.gameObject.layer == MOVE_OBSTACLE_LAYER)
         {
-            _mapCreator.ReturnTile(other.gameObject.GetComponent<TileLine>());
+           // _mapCreator.ReturnObstacle(other.gameObject.GetComponent<MoveObstacle>());
         }
     }
 }

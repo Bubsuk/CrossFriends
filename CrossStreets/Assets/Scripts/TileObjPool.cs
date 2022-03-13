@@ -16,8 +16,7 @@ public class TileObjPool
     private TileLine CreateTile(TileType type)
     {
         TileLine newObject = GameObject.Instantiate(_tile);
-        newObject.gameObject.SetActive(false);
-        newObject.Type = type;
+        newObject.Initialize(type);
 
         return newObject;
     }

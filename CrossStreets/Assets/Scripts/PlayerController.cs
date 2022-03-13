@@ -15,6 +15,10 @@ public class PlayerController : MonoBehaviour
     private float _jumpTime = 1f;
     [SerializeField]
     GameObject _destroyZone;
+    [SerializeField]
+    GameObject _rightDestroyZone;
+    [SerializeField]
+    GameObject _leftDestroyZone;
 
     Coroutine _rotateCoroutine = null;
     private bool _isJump = false;
@@ -27,52 +31,62 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         _destroyZone.transform.position = transform.position - (Vector3.forward * 20f);
+        _rightDestroyZone.transform.position = transform.position + new Vector3(50f, 0f, 38f);
+        _leftDestroyZone.transform.position = transform.position + new Vector3(-50f, 0f, 38f);
 
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W) && _isJump == false)
         {
             _dir = PlayerDir.Forward;
+            _isJump = true;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
+            StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S) && _isJump == false)
         {
             _dir = PlayerDir.Back;
+            _isJump = true;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
+            StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A) && _isJump == false)
         {
             _dir = PlayerDir.Left;
+            _isJump = true;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
+            StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D) && _isJump == false)
         {
             _dir = PlayerDir.Right;
+            _isJump = true;
             _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
+            StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
         }
-        if (_isJump == false)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                _isJump = true;
-                switch (_dir)
-                {
-                    case PlayerDir.Forward:
-                        StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
-                        break;
-                    case PlayerDir.Back:
-                        StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
-                        break;
-                    case PlayerDir.Right:
-                        StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
-                        break;
-                    case PlayerDir.Left:
-                        StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
-                        break;
-                    default:
-                        break;
-                }
+        //if (_isJump == false)
+        //{
+        //    if (Input.GetKeyDown(KeyCode.Space))
+        //    {
+        //        _isJump = true;
+        //        switch (_dir)
+        //        {
+        //            case PlayerDir.Forward:
+        //                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+        //                break;
+        //            case PlayerDir.Back:
+        //                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
+        //                break;
+        //            case PlayerDir.Right:
+        //                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
+        //                break;
+        //            case PlayerDir.Left:
+        //                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
+        //                break;
+        //            default:
+        //                break;
+        //        }
 
-            }
-        }
+        //    }
+        //}
         
     }
 

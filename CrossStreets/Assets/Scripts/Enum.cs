@@ -21,15 +21,16 @@ public enum TileType
     Water = 2,
     Rail = 3,
     DarkGrass = 4,
+    RoadLine = 5,
 
 }
 
 public enum ObstacleType
 {
 
-    Tree = 5,
-    ShortTree = 6,
-    Dragon1 = 7,
-    Dragon2 = 8,
+    Tree = 6,
+    ShortTree = 7,
+    Dragon1 = 8,
+    Dragon2 = 9,
 
 }

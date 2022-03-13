@@ -2,11 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Obstacle : MonoBehaviour
+public class TreeObstacle : MonoBehaviour/*, IObstacle*/
 {
-    [SerializeField]
-    private float _moveSpeed = 5;
-
     private ObstacleType _type;
 
     public ObstacleType Type

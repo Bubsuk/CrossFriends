@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 6734055608777653672}
   - component: {fileID: 6734055608770482778}
   - component: {fileID: 5941685590661418953}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DragonSD_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,7 +187,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c26db0ae8003b8c46a2e30a57e65ef6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 5
 --- !u!1 &6734055608777744778
 GameObject:
   m_ObjectHideFlags: 0
