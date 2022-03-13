@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6235390280111561162}
   - component: {fileID: 6526937178494579557}
   - component: {fileID: -6105819865262019495}
+  - component: {fileID: 5990708895133574261}
   m_Layer: 3
   m_Name: Rail
   m_TagString: Rail
@@ -29,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 6707685700338772464}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 1, z: 4}
+  m_LocalScale: {x: 140, y: 1, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -109,5 +110,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tileObstacle: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  _obstacleOwnThis:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   _obstacleCode: 0
   _prevTileLine: {fileID: 0}
+--- !u!114 &5990708895133574261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6707685700338772464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e72fa92b8cffb946a388c3cc835589a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveObstacle : MonoBehaviour/*, IObstacle*/
+public class MoveObstacle : Obstacle
 {
     private float _moveSpeed;
-    private ObstacleType _type;
-    private bool _isLeftToRight = false; 
-    public ObstacleType Type
+    private bool _isLeftToRight = false;
+
+    private Vector3 _spawnPos;
+    
+    public Vector3 SpawnPos
     {
-        get { return _type; }
+        set { _spawnPos = value; }
     }
     public float MoveSpeed
     {
@@ -22,12 +24,19 @@ public class MoveObstacle : MonoBehaviour/*, IObstacle*/
         set { _isLeftToRight = value; }
     }
 
-    public void Initialize(ObstacleType type)
+    private void Awake()
     {
-        gameObject.SetActive(false);
-        _type = type;
+        if (_isLeftToRight == true)
+        {
+            transform.rotation = Quaternion.Euler(Vector3.right);
+            transform.position = _spawnPos;
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(Vector3.left);
+            transform.position = _spawnPos;
+        }
     }
-
     void Update()
     {
         if(_isLeftToRight == true)

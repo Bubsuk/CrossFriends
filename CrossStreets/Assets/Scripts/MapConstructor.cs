@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,13 +46,13 @@ public class MapConstructor : MonoBehaviour
 
     // Obstacle
     [SerializeField]
-    private TreeObstacle _dragon1Prefab;
+    private Obstacle _dragon1Prefab;
     [SerializeField]
-    private TreeObstacle _dragon2Prefab;
+    private Obstacle _dragon2Prefab;
     [SerializeField]
-    private TreeObstacle _treePrefab;
+    private Obstacle _treePrefab;
     [SerializeField]
-    private TreeObstacle _shortTreePrefab;
+    private Obstacle _shortTreePrefab;
 
 
     private Queue<TileType> _sequenceTileType = new Queue<TileType>();
@@ -84,6 +85,8 @@ public class MapConstructor : MonoBehaviour
     private Dictionary<TileType, TileObjPool> _tileObjQueue = new Dictionary<TileType, TileObjPool>();
     private Dictionary<ObstacleType, ObstacleObjPool> _obstacleQueue = new Dictionary<ObstacleType, ObstacleObjPool>();
 
+    
+
     private void Initialize()
     {
         while(_sequenceTileType.Count < _startTileAmount)
@@ -93,12 +96,12 @@ public class MapConstructor : MonoBehaviour
 
         for(int i = 0; i < 15; ++i)
         {
-            _grassPool.TileInit(_grassPrefab, TileType.Grass);
-            _darkGrassPool.TileInit(_darkGrassPrefab, TileType.DarkGrass);
-            _roadPool.TileInit(_roadPrefab, TileType.Road);
-            _waterPool.TileInit(_waterPrefab, TileType.Water);
-            _railPool.TileInit(_railPrefab, TileType.Rail);
-            _roadLinePool.TileInit(_roadLinePrefab, TileType.RoadLine);
+            _grassPool.TileInit(_grassPrefab, TileType.Grass, GetObstacle);
+            _darkGrassPool.TileInit(_darkGrassPrefab, TileType.DarkGrass, GetObstacle);
+            _roadPool.TileInit(_roadPrefab, TileType.Road, GetObstacle);
+            _waterPool.TileInit(_waterPrefab, TileType.Water, GetObstacle);
+            _railPool.TileInit(_railPrefab, TileType.Rail, GetObstacle);
+            _roadLinePool.TileInit(_roadLinePrefab, TileType.RoadLine, GetObstacle);
         }
 
         for (int i = 0; i < 400; ++i)
@@ -120,10 +123,12 @@ public class MapConstructor : MonoBehaviour
         _obstacleQueue.Add(ObstacleType.Dragon2, _dragon2Pool);
         _obstacleQueue.Add(ObstacleType.Tree, _treePool);
         _obstacleQueue.Add(ObstacleType.ShortTree, _shortTreePool);
+
     }
     private void Awake()
     {
         Initialize();
+        
     }
 
 
@@ -132,7 +137,8 @@ public class MapConstructor : MonoBehaviour
         return _tileObjQueue[type].GetTile();
     }
 
-    private TreeObstacle GetObstacle(ObstacleType type)
+    
+    public Obstacle GetObstacle(ObstacleType type)
     {
         return _obstacleQueue[type].GetObstacle();
     }
@@ -145,18 +151,18 @@ public class MapConstructor : MonoBehaviour
         // _tilesInfo[2] = water
         // _tilesInfo[3] = rail
 
-        int _weightRand = Random.Range(0, 4);
+        int _weightRand = UnityEngine.Random.Range(0, 4);
         
         while(_weightRand == tempWeight)
         {
-            _weightRand = Random.Range(0, 4);
+            _weightRand = UnityEngine.Random.Range(0, 4);
         }
 
         int rand;
         switch (_weightRand)
         {
             case (int)TileType.Grass:
-                rand = Random.Range(_tilesInfo[0].MinWeight, _tilesInfo[0].MaxWeight);
+                rand = UnityEngine.Random.Range(_tilesInfo[0].MinWeight, _tilesInfo[0].MaxWeight);
                 for (int i = 0; i < rand; ++i)
                 {
                     _sequenceTileType.Enqueue(TileType.Grass);
@@ -164,21 +170,21 @@ public class MapConstructor : MonoBehaviour
                 }
                 break;
             case (int)TileType.Road:
-                rand = Random.Range(_tilesInfo[1].MinWeight, _tilesInfo[1].MaxWeight);
+                rand = UnityEngine.Random.Range(_tilesInfo[1].MinWeight, _tilesInfo[1].MaxWeight);
                 for (int i = 0; i < rand; ++i)
                 {
                     _sequenceTileType.Enqueue(TileType.Road);
                 }
                 break;
             case (int)TileType.Water:
-                rand = Random.Range(_tilesInfo[2].MinWeight, _tilesInfo[2].MaxWeight);
+                rand = UnityEngine.Random.Range(_tilesInfo[2].MinWeight, _tilesInfo[2].MaxWeight);
                 for (int i = 0; i < rand; ++i)
                 {
                     _sequenceTileType.Enqueue(TileType.Water);
                 }
                 break;
             case (int)TileType.Rail:
-                rand = Random.Range(_tilesInfo[3].MinWeight, _tilesInfo[3].MaxWeight);
+                rand = UnityEngine.Random.Range(_tilesInfo[3].MinWeight, _tilesInfo[3].MaxWeight);
                 for (int i = 0; i < rand; ++i)
                 {
                     _sequenceTileType.Enqueue(TileType.Rail);
@@ -187,10 +193,8 @@ public class MapConstructor : MonoBehaviour
             default:
                 break;
         }
-     
         
         tempWeight = _weightRand;
-
     }
 
 
@@ -216,7 +220,7 @@ public class MapConstructor : MonoBehaviour
 
     }
 
-    public void ReturnObstacle(TreeObstacle obstacle)
+    public void ReturnObstacle(Obstacle obstacle)
     {
         if (!_obstacleQueue.ContainsKey(obstacle.Type))
         {
@@ -263,10 +267,10 @@ public class MapConstructor : MonoBehaviour
     {
         for (int i = 0; i < 20; ++i)
         {
-            TreeObstacle obstacle;
+            Obstacle obstacle;
             if (tile._tileObstacle[i] == 1)
             {
-                if (Random.Range(0, 2) % 2 == 0)
+                if (UnityEngine.Random.Range(0, 2) % 2 == 0)
                 {
                     obstacle = GetObstacle(ObstacleType.Tree);
                     obstacle.gameObject.SetActive(true);
@@ -280,7 +284,6 @@ public class MapConstructor : MonoBehaviour
                     obstacle.gameObject.transform.position = new Vector3((i * 5) - 47.5f, 1, tile.gameObject.transform.position.z);
                     tile._obstacleOwnThis[i] = obstacle;
                 }
-
             }
             else
             {

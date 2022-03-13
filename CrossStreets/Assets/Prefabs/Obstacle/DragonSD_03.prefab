@@ -128,6 +128,7 @@ GameObject:
   - component: {fileID: 6734055608777653672}
   - component: {fileID: 6734055608770482778}
   - component: {fileID: 5941685590661418953}
+  - component: {fileID: 3271034228883155583}
   m_Layer: 7
   m_Name: DragonSD_03
   m_TagString: Untagged
@@ -184,7 +185,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 6734055608777744776}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c26db0ae8003b8c46a2e30a57e65ef6f, type: 3}
+  m_Script: {fileID: 11500000, guid: 4667c3ba307659f47b097346f4c5656d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3271034228883155583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6734055608777744776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c084c11fb045771428d6ae05d4323c7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6734055608777744778

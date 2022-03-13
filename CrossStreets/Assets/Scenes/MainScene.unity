@@ -153,7 +153,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 100, y: 4, z: 5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &320720281
 Transform:
@@ -181,8 +181,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f779d7111c32974cb86acbec3335557, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MapCreator: {fileID: 339020642}
-  _moveSpeed: 1
+  _mapCreator: {fileID: 339020642}
+  _moveSpeed: 5
   _player: {fileID: 1842083856}
 --- !u!54 &320720283
 Rigidbody:
@@ -243,6 +243,7 @@ MonoBehaviour:
   _roadPrefab: {fileID: -7467153719382950713, guid: b0cc26dd23b14e146bc9f452c3d48aa5, type: 3}
   _waterPrefab: {fileID: -8977181724459373636, guid: 8f45f6a294474c24587f3dc9773a69e2, type: 3}
   _railPrefab: {fileID: -6105819865262019495, guid: 5c184fa9b9bf97a43a0974508a49b2f3, type: 3}
+  _roadLinePrefab: {fileID: 7130657353261816586, guid: b40c2100265e4b14db0ddab19e54cba9, type: 3}
   _dragon1Prefab: {fileID: 6991011323485666799, guid: 3140943fe59865544a622c4bb27280b2, type: 3}
   _dragon2Prefab: {fileID: 5941685590661418953, guid: 3fdcd10a3a355844fa2616356b1404b9, type: 3}
   _treePrefab: {fileID: 8533242645182816099, guid: 590bdbbaead72d44f82be3bbd8e5ad56, type: 3}
@@ -565,6 +566,7 @@ MonoBehaviour:
   _isMove: 0
   _player: {fileID: 1842083856}
   _moveSpeed: 1
+  _playerCon: {fileID: 1842083857}
 --- !u!1 &1842083856 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6510422063472073826, guid: bc0756045f17966408872aebaeece0bc, type: 3}
