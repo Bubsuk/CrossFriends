@@ -17,4 +17,6 @@ public class Obstacle : MonoBehaviour
         gameObject.SetActive(false);
         _type = type;
     }
+
+
 }

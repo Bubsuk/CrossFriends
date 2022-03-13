@@ -28,9 +28,11 @@ public enum TileType
 public enum ObstacleType
 {
 
-    Tree = 6,
-    ShortTree = 7,
+    ShortTree = 6,
+    Tree = 7,
     Dragon1 = 8,
     Dragon2 = 9,
+    FloatingLog = 10,
+    Train = 11,
 
 }

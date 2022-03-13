@@ -8,19 +8,19 @@ public class TileObjPool
     public Queue<TileLine> _tileQueue = new Queue<TileLine>();
 
 
-    public void TileInit(TileLine prefab, TileType type, System.Func<ObstacleType, Obstacle> onGetObstacle)
+    public void TileInit(TileLine prefab, TileType type, System.Func<ObstacleType, MoveObstacle> onGetObstacle)
     {
         _tile = prefab;
         _tileQueue.Enqueue(CreateTile(type, onGetObstacle));
     }
 
-    private TileLine CreateTile(TileType type, System.Func<ObstacleType, Obstacle> onGetObstacle)
+    private TileLine CreateTile(TileType type, System.Func<ObstacleType, MoveObstacle> onGetObstacle)
     {
         TileLine newObject = GameObject.Instantiate(_tile);
         newObject.Initialize(type);
         if ((type != TileType.DarkGrass) && (type != TileType.Grass))
         {
-            newObject.GetComponent<MoveObstacleSpawner>()?.Initialize(_tile, onGetObstacle);
+            newObject.GetComponent<MoveObstacleSpawner>()?.Initialize(newObject, onGetObstacle);
         }
 
         return newObject;

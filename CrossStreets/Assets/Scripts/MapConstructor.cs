@@ -46,9 +46,11 @@ public class MapConstructor : MonoBehaviour
 
     // Obstacle
     [SerializeField]
-    private Obstacle _dragon1Prefab;
+    private MoveObstacle _dragon1Prefab;
     [SerializeField]
-    private Obstacle _dragon2Prefab;
+    private MoveObstacle _dragon2Prefab;
+    [SerializeField]
+    private MoveObstacle _floatingLogPrefab;
     [SerializeField]
     private Obstacle _treePrefab;
     [SerializeField]
@@ -77,15 +79,19 @@ public class MapConstructor : MonoBehaviour
     private TileObjPool _railPool = new TileObjPool();
     private TileObjPool _roadLinePool = new TileObjPool();
 
-    private ObstacleObjPool _dragon1Pool = new ObstacleObjPool();
-    private ObstacleObjPool _dragon2Pool = new ObstacleObjPool();
+    private MoveObstaclePool _dragon1Pool = new MoveObstaclePool();
+    private MoveObstaclePool _dragon2Pool = new MoveObstaclePool();
+    private MoveObstaclePool _floatingLogPool = new MoveObstaclePool();
+
+
     private ObstacleObjPool _treePool = new ObstacleObjPool();
     private ObstacleObjPool _shortTreePool = new ObstacleObjPool();
 
     private Dictionary<TileType, TileObjPool> _tileObjQueue = new Dictionary<TileType, TileObjPool>();
     private Dictionary<ObstacleType, ObstacleObjPool> _obstacleQueue = new Dictionary<ObstacleType, ObstacleObjPool>();
+    private Dictionary<ObstacleType, MoveObstaclePool> _moveObstacleQueue = new Dictionary<ObstacleType, MoveObstaclePool>();
 
-    
+
 
     private void Initialize()
     {
@@ -96,18 +102,19 @@ public class MapConstructor : MonoBehaviour
 
         for(int i = 0; i < 15; ++i)
         {
-            _grassPool.TileInit(_grassPrefab, TileType.Grass, GetObstacle);
-            _darkGrassPool.TileInit(_darkGrassPrefab, TileType.DarkGrass, GetObstacle);
-            _roadPool.TileInit(_roadPrefab, TileType.Road, GetObstacle);
-            _waterPool.TileInit(_waterPrefab, TileType.Water, GetObstacle);
-            _railPool.TileInit(_railPrefab, TileType.Rail, GetObstacle);
-            _roadLinePool.TileInit(_roadLinePrefab, TileType.RoadLine, GetObstacle);
+            _grassPool.TileInit(_grassPrefab, TileType.Grass, GetMoveObstacle);
+            _darkGrassPool.TileInit(_darkGrassPrefab, TileType.DarkGrass, GetMoveObstacle);
+            _roadPool.TileInit(_roadPrefab, TileType.Road, GetMoveObstacle);
+            _waterPool.TileInit(_waterPrefab, TileType.Water, GetMoveObstacle);
+            _railPool.TileInit(_railPrefab, TileType.Rail, GetMoveObstacle);
+            _roadLinePool.TileInit(_roadLinePrefab, TileType.RoadLine, GetMoveObstacle);
         }
 
         for (int i = 0; i < 400; ++i)
         {
-            _dragon1Pool.ObstacleInit(_dragon1Prefab, ObstacleType.Dragon1);
-            _dragon2Pool.ObstacleInit(_dragon2Prefab, ObstacleType.Dragon2);
+            _dragon1Pool.MoveObstacleInit(_dragon1Prefab, ObstacleType.Dragon1);
+            _dragon2Pool.MoveObstacleInit(_dragon2Prefab, ObstacleType.Dragon2);
+            _floatingLogPool.MoveObstacleInit(_floatingLogPrefab, ObstacleType.Dragon2);
             _treePool.ObstacleInit(_treePrefab, ObstacleType.Tree);
             _shortTreePool.ObstacleInit(_shortTreePrefab, ObstacleType.ShortTree);
         }
@@ -119,8 +126,10 @@ public class MapConstructor : MonoBehaviour
         _tileObjQueue.Add(TileType.Rail, _railPool);
         _tileObjQueue.Add(TileType.RoadLine, _roadLinePool);
 
-        _obstacleQueue.Add(ObstacleType.Dragon1, _dragon1Pool);
-        _obstacleQueue.Add(ObstacleType.Dragon2, _dragon2Pool);
+        _moveObstacleQueue.Add(ObstacleType.Dragon1, _dragon1Pool);
+        _moveObstacleQueue.Add(ObstacleType.Dragon2, _dragon2Pool);
+        _moveObstacleQueue.Add(ObstacleType.FloatingLog, _floatingLogPool);
+
         _obstacleQueue.Add(ObstacleType.Tree, _treePool);
         _obstacleQueue.Add(ObstacleType.ShortTree, _shortTreePool);
 
@@ -141,6 +150,11 @@ public class MapConstructor : MonoBehaviour
     public Obstacle GetObstacle(ObstacleType type)
     {
         return _obstacleQueue[type].GetObstacle();
+    }
+
+    public MoveObstacle GetMoveObstacle(ObstacleType type)
+    {
+        return _moveObstacleQueue[type].GetMoveObstacle();
     }
 
     int tempWeight = 0;
@@ -362,7 +376,6 @@ public class MapConstructor : MonoBehaviour
         }
         
         _lastTileLine = _startTile[_startTileAmount - 1];
-
     }
 
 }

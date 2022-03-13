@@ -244,8 +244,8 @@ MonoBehaviour:
   _waterPrefab: {fileID: -8977181724459373636, guid: 8f45f6a294474c24587f3dc9773a69e2, type: 3}
   _railPrefab: {fileID: -6105819865262019495, guid: 5c184fa9b9bf97a43a0974508a49b2f3, type: 3}
   _roadLinePrefab: {fileID: 7130657353261816586, guid: b40c2100265e4b14db0ddab19e54cba9, type: 3}
-  _dragon1Prefab: {fileID: 6991011323485666799, guid: 3140943fe59865544a622c4bb27280b2, type: 3}
-  _dragon2Prefab: {fileID: 5941685590661418953, guid: 3fdcd10a3a355844fa2616356b1404b9, type: 3}
+  _dragon1Prefab: {fileID: 6050309889252518124, guid: 3140943fe59865544a622c4bb27280b2, type: 3}
+  _dragon2Prefab: {fileID: 3271034228883155583, guid: 3fdcd10a3a355844fa2616356b1404b9, type: 3}
   _treePrefab: {fileID: 8533242645182816099, guid: 590bdbbaead72d44f82be3bbd8e5ad56, type: 3}
   _shortTreePrefab: {fileID: 5604279124009060043, guid: bb987457df359644ba134d32a029d313, type: 3}
   _tileSize: 4
