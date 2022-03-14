@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    [SerializeField]
-    private float _moveSpeed = 5;
-
     private ObstacleType _type;
 
     public ObstacleType Type
@@ -20,4 +17,6 @@ public class Obstacle : MonoBehaviour
         gameObject.SetActive(false);
         _type = type;
     }
+
+
 }

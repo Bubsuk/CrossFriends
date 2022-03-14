@@ -1,4 +1,11 @@
 
+public class LayerName
+{
+    public const int TILE_LINE = 3;
+    public const int OBSTACLE = 6;
+    public const int MOVE_OBSTACLE = 7;
+}
+
 enum PlayerState
 {
     Idle,
@@ -21,15 +28,19 @@ public enum TileType
     Water = 2,
     Rail = 3,
     DarkGrass = 4,
+    RoadLine = 5,
 
 }
 
 public enum ObstacleType
 {
 
-    Tree = 5,
     ShortTree = 6,
-    Dragon1 = 7,
-    Dragon2 = 8,
+    Tree = 7,
+
+    Dragon1 = 8,
+    Dragon2 = 9,
+    FloatingLog = 10,
+    Train = 11,
 
 }

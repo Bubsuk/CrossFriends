@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,12 +40,19 @@ public class MapConstructor : MonoBehaviour
     private TileLine _waterPrefab;
     [SerializeField]
     private TileLine _railPrefab;
+    [SerializeField]
+    private TileLine _roadLinePrefab;
+
 
     // Obstacle
     [SerializeField]
-    private Obstacle _dragon1Prefab;
+    private MoveObstacle _dragon1Prefab;
     [SerializeField]
-    private Obstacle _dragon2Prefab;
+    private MoveObstacle _dragon2Prefab;
+    [SerializeField]
+    private MoveObstacle _floatingLogPrefab;
+    [SerializeField]
+    private MoveObstacle _trainPrefab;
     [SerializeField]
     private Obstacle _treePrefab;
     [SerializeField]
@@ -71,14 +79,21 @@ public class MapConstructor : MonoBehaviour
     private TileObjPool _roadPool = new TileObjPool();
     private TileObjPool _waterPool = new TileObjPool();
     private TileObjPool _railPool = new TileObjPool();
+    private TileObjPool _roadLinePool = new TileObjPool();
 
-    private ObstacleObjPool _dragon1Pool = new ObstacleObjPool();
-    private ObstacleObjPool _dragon2Pool = new ObstacleObjPool();
+    private MoveObstaclePool _dragon1Pool = new MoveObstaclePool();
+    private MoveObstaclePool _dragon2Pool = new MoveObstaclePool();
+    private MoveObstaclePool _floatingLogPool = new MoveObstaclePool();
+    private MoveObstaclePool _trainPool = new MoveObstaclePool();
+
     private ObstacleObjPool _treePool = new ObstacleObjPool();
     private ObstacleObjPool _shortTreePool = new ObstacleObjPool();
 
     private Dictionary<TileType, TileObjPool> _tileObjQueue = new Dictionary<TileType, TileObjPool>();
     private Dictionary<ObstacleType, ObstacleObjPool> _obstacleQueue = new Dictionary<ObstacleType, ObstacleObjPool>();
+    private Dictionary<ObstacleType, MoveObstaclePool> _moveObstacleQueue = new Dictionary<ObstacleType, MoveObstaclePool>();
+
+
 
     private void Initialize()
     {
@@ -89,17 +104,21 @@ public class MapConstructor : MonoBehaviour
 
         for(int i = 0; i < 15; ++i)
         {
-            _grassPool.TileInit(_grassPrefab, TileType.Grass);
-            _darkGrassPool.TileInit(_darkGrassPrefab, TileType.DarkGrass);
-            _roadPool.TileInit(_roadPrefab, TileType.Road);
-            _waterPool.TileInit(_waterPrefab, TileType.Water);
-            _railPool.TileInit(_railPrefab, TileType.Rail);
+            _grassPool.TileInit(_grassPrefab, TileType.Grass, GetMoveObstacle, ReturnMoveObstacle);
+            _darkGrassPool.TileInit(_darkGrassPrefab, TileType.DarkGrass, GetMoveObstacle, ReturnMoveObstacle);
+            _roadPool.TileInit(_roadPrefab, TileType.Road, GetMoveObstacle, ReturnMoveObstacle);
+            _waterPool.TileInit(_waterPrefab, TileType.Water, GetMoveObstacle, ReturnMoveObstacle);
+            _railPool.TileInit(_railPrefab, TileType.Rail, GetMoveObstacle, ReturnMoveObstacle);
+            _roadLinePool.TileInit(_roadLinePrefab, TileType.RoadLine, GetMoveObstacle, ReturnMoveObstacle);
         }
 
         for (int i = 0; i < 400; ++i)
         {
-            _dragon1Pool.ObstacleInit(_dragon1Prefab, ObstacleType.Dragon1);
-            _dragon2Pool.ObstacleInit(_dragon2Prefab, ObstacleType.Dragon2);
+            _dragon1Pool.MoveObstacleInit(_dragon1Prefab, ObstacleType.Dragon1);
+            _dragon2Pool.MoveObstacleInit(_dragon2Prefab, ObstacleType.Dragon2);
+            _floatingLogPool.MoveObstacleInit(_floatingLogPrefab, ObstacleType.FloatingLog);
+            _trainPool.MoveObstacleInit(_trainPrefab, ObstacleType.Train);
+
             _treePool.ObstacleInit(_treePrefab, ObstacleType.Tree);
             _shortTreePool.ObstacleInit(_shortTreePrefab, ObstacleType.ShortTree);
         }
@@ -109,15 +128,21 @@ public class MapConstructor : MonoBehaviour
         _tileObjQueue.Add(TileType.Road, _roadPool);
         _tileObjQueue.Add(TileType.Water, _waterPool);
         _tileObjQueue.Add(TileType.Rail, _railPool);
+        _tileObjQueue.Add(TileType.RoadLine, _roadLinePool);
 
-        _obstacleQueue.Add(ObstacleType.Dragon1, _dragon1Pool);
-        _obstacleQueue.Add(ObstacleType.Dragon2, _dragon2Pool);
+        _moveObstacleQueue.Add(ObstacleType.Dragon1, _dragon1Pool);
+        _moveObstacleQueue.Add(ObstacleType.Dragon2, _dragon2Pool);
+        _moveObstacleQueue.Add(ObstacleType.FloatingLog, _floatingLogPool);
+        _moveObstacleQueue.Add(ObstacleType.Train, _trainPool);
+
         _obstacleQueue.Add(ObstacleType.Tree, _treePool);
         _obstacleQueue.Add(ObstacleType.ShortTree, _shortTreePool);
+
     }
     private void Awake()
     {
         Initialize();
+        
     }
 
 
@@ -126,9 +151,15 @@ public class MapConstructor : MonoBehaviour
         return _tileObjQueue[type].GetTile();
     }
 
-    private Obstacle GetObstacle(ObstacleType type)
+    
+    public Obstacle GetObstacle(ObstacleType type)
     {
         return _obstacleQueue[type].GetObstacle();
+    }
+
+    public MoveObstacle GetMoveObstacle(ObstacleType type)
+    {
+        return _moveObstacleQueue[type].GetMoveObstacle();
     }
 
     int tempWeight = 0;
@@ -139,18 +170,18 @@ public class MapConstructor : MonoBehaviour
         // _tilesInfo[2] = water
         // _tilesInfo[3] = rail
 
-        int _weightRand = Random.Range(0, 4);
+        int _weightRand = UnityEngine.Random.Range(0, 4);
         
         while(_weightRand == tempWeight)
         {
-            _weightRand = Random.Range(0, 4);
+            _weightRand = UnityEngine.Random.Range(0, 4);
         }
 
         int rand;
         switch (_weightRand)
         {
             case (int)TileType.Grass:
-                rand = Random.Range(_tilesInfo[0].MinWeight, _tilesInfo[0].MaxWeight);
+                rand = UnityEngine.Random.Range(_tilesInfo[0].MinWeight, _tilesInfo[0].MaxWeight);
                 for (int i = 0; i < rand; ++i)
                 {
                     _sequenceTileType.Enqueue(TileType.Grass);
@@ -158,21 +189,21 @@ public class MapConstructor : MonoBehaviour
                 }
                 break;
             case (int)TileType.Road:
-                rand = Random.Range(_tilesInfo[1].MinWeight, _tilesInfo[1].MaxWeight);
+                rand = UnityEngine.Random.Range(_tilesInfo[1].MinWeight, _tilesInfo[1].MaxWeight);
                 for (int i = 0; i < rand; ++i)
                 {
                     _sequenceTileType.Enqueue(TileType.Road);
                 }
                 break;
             case (int)TileType.Water:
-                rand = Random.Range(_tilesInfo[2].MinWeight, _tilesInfo[2].MaxWeight);
+                rand = UnityEngine.Random.Range(_tilesInfo[2].MinWeight, _tilesInfo[2].MaxWeight);
                 for (int i = 0; i < rand; ++i)
                 {
                     _sequenceTileType.Enqueue(TileType.Water);
                 }
                 break;
             case (int)TileType.Rail:
-                rand = Random.Range(_tilesInfo[3].MinWeight, _tilesInfo[3].MaxWeight);
+                rand = UnityEngine.Random.Range(_tilesInfo[3].MinWeight, _tilesInfo[3].MaxWeight);
                 for (int i = 0; i < rand; ++i)
                 {
                     _sequenceTileType.Enqueue(TileType.Rail);
@@ -181,29 +212,31 @@ public class MapConstructor : MonoBehaviour
             default:
                 break;
         }
-     
         
         tempWeight = _weightRand;
-
     }
 
 
     public void ReturnTile(TileLine tile)
     {
-        for (int i = 0; i < 20; ++i)
+        if (!_tileObjQueue.ContainsKey(tile.Type))
         {
-            if(tile._obstacleOwnThis[i] != null)
-            {
-                ReturnObstacle(tile._obstacleOwnThis[i]);
-            }
+            Debug.Log($"{tile.Type} 타입의 키가 없습니다");
         }
+        if (tile.Type != TileType.RoadLine)
+        {
+            for (int i = 0; i < 20; ++i)
+            {
+                if (tile._obstacleOwnThis[i] != null)
+                {
+                    ReturnObstacle(tile._obstacleOwnThis[i]);
+                }
+            }
 
-        //tile.gameObject.SetActive(false);
+            SpawnTile();
+        }
         _tileObjQueue[tile.Type].ReturnTile(tile);
 
-       
-
-        SpawnTile();
     }
 
     public void ReturnObstacle(Obstacle obstacle)
@@ -215,26 +248,45 @@ public class MapConstructor : MonoBehaviour
         _obstacleQueue[obstacle.Type].ReturnObstacle(obstacle); 
     }
 
+    public void ReturnMoveObstacle(MoveObstacle obstacle)
+    {
+        if (!_moveObstacleQueue.ContainsKey(obstacle.Type))
+        {
+            Debug.Log($"{obstacle.Type} 타입의 키가 없습니다");
+        }
+        _moveObstacleQueue[obstacle.Type].ReturnMoveObstacle(obstacle);
+    }
+
 
     void SpawnTile()
     {
-        TileLine SpawnTile;
+        TileLine spawnTile;
 
         if(_sequenceTileType.Count <= 0)
         {
             TileSequenceMaker();
         }
 
-        SpawnTile = GetTile(_sequenceTileType.Dequeue());
-        SpawnTile.transform.position = _lastTileLine.gameObject.transform.position + Vector3.forward * _tileSize;
-        SpawnTile.gameObject.SetActive(true);
-        SpawnTile._obstacleCode = ObstacleMaker.RandomTenBinaryDigitsGenerator(_obstacleMaxAmt);
-        SpawnTile._tileObstacle = ObstacleMaker.RandomObstacleArr(SpawnTile.Type, _lastTileLine, SpawnTile._obstacleCode);
-        if (SpawnTile.Type == TileType.Grass || SpawnTile.Type == TileType.DarkGrass)
+        spawnTile = GetTile(_sequenceTileType.Dequeue());
+        spawnTile.transform.position = _lastTileLine.gameObject.transform.position + Vector3.forward * _tileSize;
+        spawnTile.gameObject.SetActive(true);
+        spawnTile._obstacleCode = ObstacleMaker.RandomTenBinaryDigitsGenerator(_obstacleMaxAmt);
+        spawnTile._tileObstacle = ObstacleMaker.RandomObstacleArr(spawnTile.Type, _lastTileLine, spawnTile._obstacleCode);
+        
+        if(_lastTileLine.Type == TileType.Road && spawnTile.Type == TileType.Road)
         {
-            ArrangeTree(SpawnTile);
+            TileLine roadLine = GetTile(TileType.RoadLine);
+            roadLine.transform.position = _lastTileLine.gameObject.transform.position + Vector3.forward * 2f;
+            roadLine._obstacleCode = 0;
+            roadLine._tileObstacle = ObstacleMaker.RandomObstacleArr(roadLine.Type, _lastTileLine, roadLine._obstacleCode);
+            roadLine.gameObject.SetActive(true);
+            roadLine._prevTileLine = roadLine;
         }
-        _lastTileLine = SpawnTile;
+        if (spawnTile.Type == TileType.Grass || spawnTile.Type == TileType.DarkGrass)
+        {
+            ArrangeTree(spawnTile);
+        }
+        _lastTileLine = spawnTile;
 
     }
 
@@ -246,7 +298,7 @@ public class MapConstructor : MonoBehaviour
             Obstacle obstacle;
             if (tile._tileObstacle[i] == 1)
             {
-                if (Random.Range(0, 2) % 2 == 0)
+                if (UnityEngine.Random.Range(0, 2) % 2 == 0)
                 {
                     obstacle = GetObstacle(ObstacleType.Tree);
                     obstacle.gameObject.SetActive(true);
@@ -260,7 +312,6 @@ public class MapConstructor : MonoBehaviour
                     obstacle.gameObject.transform.position = new Vector3((i * 5) - 47.5f, 1, tile.gameObject.transform.position.z);
                     tile._obstacleOwnThis[i] = obstacle;
                 }
-
             }
             else
             {
@@ -322,7 +373,16 @@ public class MapConstructor : MonoBehaviour
                 _startTile[i]._prevTileLine = _startTile[i - 1];
                 _startTile[i]._obstacleCode = ObstacleMaker.RandomTenBinaryDigitsGenerator(_obstacleMaxAmt);
                 _startTile[i]._tileObstacle = ObstacleMaker.RandomObstacleArr(_startTile[i].Type, _startTile[i]._prevTileLine, _startTile[i]._obstacleCode);
-                if(_startTile[i].Type == TileType.Grass || _startTile[i].Type == TileType.DarkGrass)
+                if (_startTile[i].Type == TileType.Road && _startTile[i - 1].Type == TileType.Road)
+                {
+                    TileLine roadLine = GetTile(TileType.RoadLine);
+                    roadLine.transform.position = _startTile[i - 1].gameObject.transform.position + Vector3.forward * 2f;
+                    roadLine._obstacleCode = 0;
+                    roadLine._tileObstacle = ObstacleMaker.RandomObstacleArr(roadLine.Type, roadLine, roadLine._obstacleCode);
+                    roadLine.gameObject.SetActive(true);
+                    roadLine._prevTileLine = roadLine;
+                }
+                if (_startTile[i].Type == TileType.Grass || _startTile[i].Type == TileType.DarkGrass)
                 {
                     ArrangeTree(_startTile[i]);
                 }
@@ -330,7 +390,6 @@ public class MapConstructor : MonoBehaviour
         }
         
         _lastTileLine = _startTile[_startTileAmount - 1];
-
     }
 
 }

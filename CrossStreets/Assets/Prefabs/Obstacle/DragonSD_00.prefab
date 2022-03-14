@@ -242,8 +242,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1034844629304077867}
   - component: {fileID: 1034844629313585625}
-  - component: {fileID: 6991011323485666799}
-  m_Layer: 0
+  - component: {fileID: 6050309889252518124}
+  - component: {fileID: 5746325113025567863}
+  m_Layer: 7
   m_Name: DragonSD_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -290,7 +291,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &6991011323485666799
+--- !u!114 &6050309889252518124
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -299,10 +300,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1034844629304111627}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c26db0ae8003b8c46a2e30a57e65ef6f, type: 3}
+  m_Script: {fileID: 11500000, guid: c084c11fb045771428d6ae05d4323c7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 5
+--- !u!65 &5746325113025567863
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034844629304111627}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 4, z: 1}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!1 &1034844629304111629
 GameObject:
   m_ObjectHideFlags: 0
