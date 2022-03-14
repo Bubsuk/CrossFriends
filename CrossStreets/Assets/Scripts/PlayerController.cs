@@ -6,7 +6,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private PlayerState _state = PlayerState.Idle;
-    private PlayerDir _dir = PlayerDir.Forward;
+    private PlayerDir _dir;
+    private PlayerDir _saveDir;
 
     private Rigidbody _rigidbody;
 
@@ -15,8 +16,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float _jumpTime = 1f;
     [SerializeField]
-    GameObject _destroyZone;
+    private GameObject _destroyZone;
 
+    [SerializeField]
+    private GameObject _frontDetector;
+    [SerializeField]
+    private GameObject _rearDetector;
+    [SerializeField]
+    private GameObject _leftDetector;
+    [SerializeField]
+    private GameObject _rightDetector;
+
+    private readonly int TILE_LAYER = 3;
 
     Coroutine _rotateCoroutine = null;
     private bool _isJump = false;
@@ -28,69 +39,189 @@ public class PlayerController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
+    bool CanGoThrough(PlayerDir dir)
+    {
+        RaycastHit hit;
+        float maxDistance = 20f;
+        switch(dir)
+        {
+            case PlayerDir.Forward:
+                if (Physics.Raycast(_frontDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_frontDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    Debug.Log(hit.collider.name);
+                    return IsCanMove(hit.collider.gameObject.layer);
+                }
+                break;
+            case PlayerDir.Back:
+                if (Physics.Raycast(_rearDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_rearDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    Debug.Log(hit.collider.name);
+                    return IsCanMove(hit.collider.gameObject.layer);
+                }
+                break;
+            case PlayerDir.Right:
+                if (Physics.Raycast(_rightDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_rightDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    Debug.Log(hit.collider.name);
+                    return IsCanMove(hit.collider.gameObject.layer);
+                }
+                break;
+            case PlayerDir.Left:
+                if (Physics.Raycast(_leftDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_leftDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    Debug.Log(hit.collider.name);
+                    return IsCanMove(hit.collider.gameObject.layer);
+                }
+                break;
+
+        }
+
+        return false;
+
+    }
+
+    bool IsCanMove(int layer)
+    {
+        Debug.Log(layer);
+        switch (layer)
+        {
+            case LayerName.OBSTACLE:
+                return false;
+            case LayerName.MOVE_OBSTACLE:
+                return true;
+            case LayerName.TILE_LINE:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     void Update()
     {
         _destroyZone.transform.position = transform.position - (Vector3.forward * 20f);
 
         if (Input.GetKeyDown(KeyCode.W) && _isJump == false)
         {
+            bool result = false;
             _dir = PlayerDir.Forward;
-            _isJump = true;
-            _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
-            StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
-            OnInputKey.Invoke();
+            if(_saveDir == PlayerDir.Back)
+            {
+                result = CanGoThrough(PlayerDir.Back);
+            }
+            else if(_saveDir == PlayerDir.Left)
+            {
+                result = CanGoThrough(PlayerDir.Right);
+            }
+            else if(_saveDir == PlayerDir.Right)
+            {
+                result = CanGoThrough(PlayerDir.Left);
+            }
+            else
+            {
+                result = CanGoThrough(_dir);
+            }
+
+            if (result)
+            {
+                _isJump = true;
+                _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
+                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                OnInputKey.Invoke();
+            }
         }
         if (Input.GetKeyDown(KeyCode.S) && _isJump == false)
         {
+            bool result = false;
             _dir = PlayerDir.Back;
-            _isJump = true;
-            _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
-            StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
-            OnInputKey.Invoke();
+            if (_saveDir == PlayerDir.Forward)
+            {
+                result = CanGoThrough(PlayerDir.Back);
+            }
+            else if (_saveDir == PlayerDir.Left)
+            {
+                result = CanGoThrough(PlayerDir.Left);
+            }
+            else if (_saveDir == PlayerDir.Right)
+            {
+                result = CanGoThrough(PlayerDir.Right);
+            }
+            else
+            {
+                result = CanGoThrough(PlayerDir.Forward);
+            }
+
+            if (result)
+            {
+                _isJump = true;
+                _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
+                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
+                OnInputKey.Invoke();
+            }
         }
         if (Input.GetKeyDown(KeyCode.A) && _isJump == false)
         {
+            bool result = false;
             _dir = PlayerDir.Left;
-            _isJump = true;
-            _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
-            StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
-            OnInputKey.Invoke();
+            if (_saveDir == PlayerDir.Forward)
+            {
+                result = CanGoThrough(PlayerDir.Left);
+            }
+            else if (_saveDir == PlayerDir.Left)
+            {
+                result = CanGoThrough(PlayerDir.Forward);
+            }
+            else if (_saveDir == PlayerDir.Right)
+            {
+                result = CanGoThrough(PlayerDir.Back);
+            }
+            else
+            {
+                result = CanGoThrough(PlayerDir.Right);
+            }
+            if (result)
+            {
+                _isJump = true;
+                _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
+                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
+                OnInputKey.Invoke();
+            }
         }
         if (Input.GetKeyDown(KeyCode.D) && _isJump == false)
         {
             _dir = PlayerDir.Right;
-            _isJump = true;
-            _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
-            StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
-            OnInputKey.Invoke();
+            bool result = false;
+            if (_saveDir == PlayerDir.Forward)
+            {
+                result = CanGoThrough(PlayerDir.Right);
+            }
+            else if (_saveDir == PlayerDir.Left)
+            {
+                result = CanGoThrough(PlayerDir.Back);
+            }
+            else if (_saveDir == PlayerDir.Right)
+            {
+                result = CanGoThrough(PlayerDir.Forward);
+            }
+            else
+            {
+                result = CanGoThrough(PlayerDir.Left);
+            }
+            if (result)
+            {
+                _isJump = true;
+                _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
+                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
+                OnInputKey.Invoke();
+            }
         }
-        //if (_isJump == false)
-        //{
-        //    if (Input.GetKeyDown(KeyCode.Space))
-        //    {
-        //        _isJump = true;
-        //        switch (_dir)
-        //        {
-        //            case PlayerDir.Forward:
-        //                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
-        //                break;
-        //            case PlayerDir.Back:
-        //                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
-        //                break;
-        //            case PlayerDir.Right:
-        //                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
-        //                break;
-        //            case PlayerDir.Left:
-        //                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
-        //                break;
-        //            default:
-        //                break;
-        //        }
 
-        //    }
-        //}
-        
+        _saveDir = _dir;
     }
+   
 
     IEnumerator PlayerTurn(PlayerDir dir, float durationTime)
     {

@@ -19,8 +19,6 @@ public class CameraMove : MonoBehaviour
     {
         _playerCon.OnInputKey -= CamHorizontalMove;
         _playerCon.OnInputKey += CamHorizontalMove;
-
-
     }
 
     void CamHorizontalMove()
