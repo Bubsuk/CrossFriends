@@ -17,7 +17,7 @@ public class TileDeadPoint : MonoBehaviour
     
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == TILE_LAYER)
+        if (other.gameObject.layer == LayerName.TILE_LINE)
         {
             _mapCreator.ReturnTile(other.gameObject.GetComponent<TileLine>());
         }

@@ -17,4 +17,6 @@ public class SideDeadPoint : MonoBehaviour
             _mapCreator.ReturnMoveObstacle(other.gameObject.GetComponent<MoveObstacle>());
         }
     }
+
+    
 }

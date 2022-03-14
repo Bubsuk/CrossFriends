@@ -49,7 +49,6 @@ public class PlayerController : MonoBehaviour
                 if (Physics.Raycast(_frontDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
                 {
                     Debug.DrawRay(_frontDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    Debug.Log(hit.collider.name);
                     return IsCanMove(hit.collider.gameObject.layer);
                 }
                 break;
@@ -57,7 +56,6 @@ public class PlayerController : MonoBehaviour
                 if (Physics.Raycast(_rearDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
                 {
                     Debug.DrawRay(_rearDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    Debug.Log(hit.collider.name);
                     return IsCanMove(hit.collider.gameObject.layer);
                 }
                 break;
@@ -65,7 +63,6 @@ public class PlayerController : MonoBehaviour
                 if (Physics.Raycast(_rightDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
                 {
                     Debug.DrawRay(_rightDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    Debug.Log(hit.collider.name);
                     return IsCanMove(hit.collider.gameObject.layer);
                 }
                 break;
@@ -73,7 +70,6 @@ public class PlayerController : MonoBehaviour
                 if (Physics.Raycast(_leftDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
                 {
                     Debug.DrawRay(_leftDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    Debug.Log(hit.collider.name);
                     return IsCanMove(hit.collider.gameObject.layer);
                 }
                 break;
@@ -81,17 +77,17 @@ public class PlayerController : MonoBehaviour
         }
 
         return false;
-
     }
 
     bool IsCanMove(int layer)
     {
-        Debug.Log(layer);
         switch (layer)
         {
             case LayerName.OBSTACLE:
                 return false;
             case LayerName.MOVE_OBSTACLE:
+                return true;
+            case LayerName.FLOATING_LOG:
                 return true;
             case LayerName.TILE_LINE:
                 return true;
@@ -277,5 +273,14 @@ public class PlayerController : MonoBehaviour
         _isJump = false;
     }
 
-   
+    private void OnCollisionEnter(Collision collision)
+    {
+        // Á×´Â Ã³¸®
+        if (collision.gameObject.layer == LayerName.MOVE_OBSTACLE)
+        {
+            Debug.Log("GameOver");
+            GameManager.Instance.OnPlayerDead();
+        }
+    }
+
 }

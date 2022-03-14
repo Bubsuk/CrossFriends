@@ -4,6 +4,7 @@ public class LayerName
     public const int TILE_LINE = 3;
     public const int OBSTACLE = 6;
     public const int MOVE_OBSTACLE = 7;
+    public const int FLOATING_LOG = 8;
 }
 
 enum PlayerState

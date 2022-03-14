@@ -298,7 +298,7 @@ GameObject:
   - component: {fileID: 934382105425109245}
   - component: {fileID: 1991167958440525643}
   - component: {fileID: 2008265412416927198}
-  m_Layer: 7
+  m_Layer: 8
   m_Name: FloatingLog
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -6,13 +6,21 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     static GameManager s_Instance;
-    static GameManager Instance { get { Init(); return s_Instance; } }
+    public static GameManager Instance { get { Init(); return s_Instance; } }
 
     public Text ScoreText;
     public GameObject GameOverUI;
 
 
-    
+    private bool _isGameOver = false;
+    private int _score;
+
+    public bool IsGameOver
+    {
+        get { return _isGameOver; }
+        set { _isGameOver = value; }
+    }
+
 
     void Start()
     {
@@ -38,5 +46,21 @@ public class GameManager : MonoBehaviour
             s_Instance = _gameObject.GetComponent<GameManager>();
         }
 
+    }
+
+    public void AddScore()
+    {
+        if (_isGameOver == false)
+        {
+            ++_score;
+            ScoreText.text = $"Score : {_score}";
+        }
+
+    }
+
+    public void OnPlayerDead()
+    {
+        _isGameOver = true;
+        GameOverUI.SetActive(true);
     }
 }
