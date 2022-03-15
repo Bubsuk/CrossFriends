@@ -351,8 +351,9 @@ public class MapConstructor : MonoBehaviour
                     _startTile[i]._prevTileLine = _startTile[i - 1];
                     _startTile[i]._obstacleCode = ObstacleMaker.RandomTenBinaryDigitsGenerator(_obstacleMaxAmt);
                     _startTile[i]._tileObstacle = ObstacleMaker.RandomObstacleArr(TileType.Grass, _startTile[i]._prevTileLine, _startTile[i]._obstacleCode);
-                    ArrangeTree(_startTile[i]);
                     _startTile[i]._tileObstacle[10] = 0;
+                    ArrangeTree(_startTile[i]);
+                    
                 }
                 else
                 {

@@ -27,61 +27,26 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameObject _rightDetector;
 
-    private readonly int TILE_LAYER = 3;
-
     Coroutine _rotateCoroutine = null;
     private bool _isJump = false;
+    private bool _isOnLog = false;
+    private bool _isLogLeftToRight = false;
+    private float _floatingLogSpeed = 0f;
 
     public event Action OnInputKey = null;
+
+    private int _score = 0;
 
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    bool CanGoThrough(PlayerDir dir)
+  
+
+    bool IsCanMove(TileLine tile)
     {
-        RaycastHit hit;
-        float maxDistance = 20f;
-        switch(dir)
-        {
-            case PlayerDir.Forward:
-                if (Physics.Raycast(_frontDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_frontDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    return IsCanMove(hit.collider.gameObject.layer);
-                }
-                break;
-            case PlayerDir.Back:
-                if (Physics.Raycast(_rearDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_rearDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    return IsCanMove(hit.collider.gameObject.layer);
-                }
-                break;
-            case PlayerDir.Right:
-                if (Physics.Raycast(_rightDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_rightDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    return IsCanMove(hit.collider.gameObject.layer);
-                }
-                break;
-            case PlayerDir.Left:
-                if (Physics.Raycast(_leftDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_leftDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    return IsCanMove(hit.collider.gameObject.layer);
-                }
-                break;
-
-        }
-
-        return false;
-    }
-
-    bool IsCanMove(int layer)
-    {
-        switch (layer)
+        switch (tile.gameObject.layer)
         {
             case LayerName.OBSTACLE:
                 return false;
@@ -96,126 +61,492 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    GameObject DetectTile(PlayerDir dir)
+    {
+        RaycastHit hit;
+        GameObject tempTileLine;
+        float maxDistance = 20f;
+
+        switch (dir)
+        {
+            case PlayerDir.Forward:
+                if (Physics.Raycast(_frontDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_frontDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    tempTileLine = hit.transform.gameObject;
+                    return tempTileLine;
+                }
+                break;
+            case PlayerDir.Back:
+                if (Physics.Raycast(_rearDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_rearDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    tempTileLine = hit.transform.gameObject;
+                    return tempTileLine;
+                }
+                break;
+            case PlayerDir.Right:
+                if (Physics.Raycast(_rightDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_rightDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    tempTileLine = hit.transform.gameObject;
+                    return tempTileLine;
+                }
+                break;
+            case PlayerDir.Left:
+                if (Physics.Raycast(_leftDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_leftDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    tempTileLine = hit.transform.gameObject;
+                    return tempTileLine;
+                }
+                break;
+        }
+
+        return null;
+    }
+
+
     void Update()
     {
         _destroyZone.transform.position = transform.position - (Vector3.forward * 20f);
 
-        if (Input.GetKeyDown(KeyCode.W) && _isJump == false)
+        if (_isOnLog == true)
         {
-            bool result = false;
-            _dir = PlayerDir.Forward;
-            if(_saveDir == PlayerDir.Back)
+            if (_isLogLeftToRight == true)
             {
-                result = CanGoThrough(PlayerDir.Back);
-            }
-            else if(_saveDir == PlayerDir.Left)
-            {
-                result = CanGoThrough(PlayerDir.Right);
-            }
-            else if(_saveDir == PlayerDir.Right)
-            {
-                result = CanGoThrough(PlayerDir.Left);
+                transform.position += Vector3.right * _floatingLogSpeed * Time.deltaTime;
             }
             else
             {
-                result = CanGoThrough(_dir);
-            }
-
-            if (result)
-            {
-                _isJump = true;
-                _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
-                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
-                OnInputKey.Invoke();
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.S) && _isJump == false)
-        {
-            bool result = false;
-            _dir = PlayerDir.Back;
-            if (_saveDir == PlayerDir.Forward)
-            {
-                result = CanGoThrough(PlayerDir.Back);
-            }
-            else if (_saveDir == PlayerDir.Left)
-            {
-                result = CanGoThrough(PlayerDir.Left);
-            }
-            else if (_saveDir == PlayerDir.Right)
-            {
-                result = CanGoThrough(PlayerDir.Right);
-            }
-            else
-            {
-                result = CanGoThrough(PlayerDir.Forward);
-            }
-
-            if (result)
-            {
-                _isJump = true;
-                _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
-                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
-                OnInputKey.Invoke();
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.A) && _isJump == false)
-        {
-            bool result = false;
-            _dir = PlayerDir.Left;
-            if (_saveDir == PlayerDir.Forward)
-            {
-                result = CanGoThrough(PlayerDir.Left);
-            }
-            else if (_saveDir == PlayerDir.Left)
-            {
-                result = CanGoThrough(PlayerDir.Forward);
-            }
-            else if (_saveDir == PlayerDir.Right)
-            {
-                result = CanGoThrough(PlayerDir.Back);
-            }
-            else
-            {
-                result = CanGoThrough(PlayerDir.Right);
-            }
-            if (result)
-            {
-                _isJump = true;
-                _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
-                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
-                OnInputKey.Invoke();
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.D) && _isJump == false)
-        {
-            _dir = PlayerDir.Right;
-            bool result = false;
-            if (_saveDir == PlayerDir.Forward)
-            {
-                result = CanGoThrough(PlayerDir.Right);
-            }
-            else if (_saveDir == PlayerDir.Left)
-            {
-                result = CanGoThrough(PlayerDir.Back);
-            }
-            else if (_saveDir == PlayerDir.Right)
-            {
-                result = CanGoThrough(PlayerDir.Forward);
-            }
-            else
-            {
-                result = CanGoThrough(PlayerDir.Left);
-            }
-            if (result)
-            {
-                _isJump = true;
-                _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
-                StartCoroutine(PlayerJump(_jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
-                OnInputKey.Invoke();
+                transform.position -= Vector3.right * _floatingLogSpeed * Time.deltaTime;
             }
         }
 
-        _saveDir = _dir;
+        if(GameManager.Instance.IsGameOver == false)
+        {
+            if (Input.GetKeyDown(KeyCode.W) && _isJump == false)
+            {
+                bool result = false;
+                bool logJump = false;
+                GameObject rayedTile;
+                MoveObstacle floatingLog = null;
+
+                _dir = PlayerDir.Forward;
+                if (_saveDir == PlayerDir.Back)
+                {
+                    rayedTile = DetectTile(PlayerDir.Back);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else if (_saveDir == PlayerDir.Left)
+                {
+                    rayedTile = DetectTile(PlayerDir.Right);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+
+                else if (_saveDir == PlayerDir.Right)
+                {
+                    rayedTile = DetectTile(PlayerDir.Left);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+
+                }
+                else
+                {
+                    rayedTile = DetectTile(PlayerDir.Forward);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+
+                if (result)
+                {
+                    _isJump = true;
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
+                    StartCoroutine(PlayerJump(rayedTile.GetComponent<TileLine>(), _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                    OnInputKey.Invoke();
+                    _saveDir = _dir;
+                }
+                if (logJump)
+                {
+                    _isJump = true;
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
+                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                    OnInputKey.Invoke();
+                    _saveDir = _dir;
+                }
+
+
+            }
+
+            if (Input.GetKeyDown(KeyCode.S) && _isJump == false)
+            {
+                bool result = false;
+                bool logJump = false;
+                GameObject rayedTile;
+                MoveObstacle floatingLog = null;
+
+                _dir = PlayerDir.Back;
+                if (_saveDir == PlayerDir.Back)
+                {
+                    rayedTile = DetectTile(PlayerDir.Forward);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else if (_saveDir == PlayerDir.Left)
+                {
+                    rayedTile = DetectTile(PlayerDir.Left);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else if (_saveDir == PlayerDir.Right)
+                {
+                    rayedTile = DetectTile(PlayerDir.Right);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else
+                {
+                    rayedTile = DetectTile(PlayerDir.Back);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                if (result)
+                {
+                    _isJump = true;
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
+                    StartCoroutine(PlayerJump(rayedTile.GetComponent<TileLine>(), _jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
+                    OnInputKey.Invoke();
+                    _saveDir = _dir;
+                }
+                if (logJump)
+                {
+                    _isJump = true;
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
+                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                    OnInputKey.Invoke();
+                    _saveDir = _dir;
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.A) && _isJump == false)
+            {
+                bool result = false;
+                bool logJump = false;
+                GameObject rayedTile;
+                MoveObstacle floatingLog = null;
+
+                _dir = PlayerDir.Left;
+
+                if (_saveDir == PlayerDir.Back)
+                {
+                    rayedTile = DetectTile(PlayerDir.Left);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else if (_saveDir == PlayerDir.Left)
+                {
+                    rayedTile = DetectTile(PlayerDir.Forward);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else if (_saveDir == PlayerDir.Right)
+                {
+                    rayedTile = DetectTile(PlayerDir.Back);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else
+                {
+                    rayedTile = DetectTile(PlayerDir.Left);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+
+                if (result)
+                {
+                    _isJump = true;
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
+                    StartCoroutine(PlayerJump(rayedTile.GetComponent<TileLine>(), _jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
+                    OnInputKey.Invoke();
+                    _saveDir = _dir;
+                }
+
+                if (logJump)
+                {
+                    _isJump = true;
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
+                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                    OnInputKey.Invoke();
+                    _saveDir = _dir;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.D) && _isJump == false)
+            {
+                bool result = false;
+                bool logJump = false;
+                GameObject rayedTile;
+                MoveObstacle floatingLog = null;
+
+                _dir = PlayerDir.Right;
+
+                if (_saveDir == PlayerDir.Back)
+                {
+                    rayedTile = DetectTile(PlayerDir.Left);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else if (_saveDir == PlayerDir.Left)
+                {
+                    rayedTile = DetectTile(PlayerDir.Back);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else if (_saveDir == PlayerDir.Right)
+                {
+                    rayedTile = DetectTile(PlayerDir.Forward);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+                else
+                {
+                    rayedTile = DetectTile(PlayerDir.Right);
+                    if (rayedTile.GetComponent<TileLine>() != null)
+                    {
+                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
+                        {
+                            GameManager.Instance.OnPlayerDead();
+                        }
+                        _isOnLog = false;
+                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    }
+                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    {
+                        _isOnLog = true;
+                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                        logJump = true;
+                    }
+                }
+
+
+                if (result)
+                {
+                    _isJump = true;
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
+                    StartCoroutine(PlayerJump(rayedTile.GetComponent<TileLine>(), _jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
+                    OnInputKey.Invoke();
+                    _saveDir = _dir;
+                }
+
+                if (logJump)
+                {
+                    _isJump = true;
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
+                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                    OnInputKey.Invoke();
+                    _saveDir = _dir;
+                }
+            }
+        }
+       
+
+        
     }
    
 
@@ -245,15 +576,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator PlayerJump(float durationTime, Vector3 vertex1, Vector3 vertex2, Vector3 destination)
+    IEnumerator PlayerJump(TileLine tile, float durationTime, Vector3 vertex1, Vector3 vertex2, Vector3 destination)
     {
         float _elapsedTime = 0f;
         bool _isJumpEnd = false;
+        int posX = (int)Math.Abs(tile.transform.position.x - 50f - destination.x) / 5 + 1;
 
         Vector3 _startPosA = transform.position;
         Vector3 _startPosB = vertex1;
         Vector3 _destPosA = vertex2;
-        Vector3 _destPosB = destination;
+        Vector3 _destPosB = new Vector3(tile.transform.position.x - 50f + 5 * posX - 2.5f, tile.transform.position.y, tile.transform.position.z); ;
 
         while (_isJumpEnd == false)
         {
@@ -273,13 +605,50 @@ public class PlayerController : MonoBehaviour
         _isJump = false;
     }
 
+    IEnumerator FloatingLogJump(MoveObstacle log, float durationTime, Vector3 vertex1, Vector3 vertex2, Vector3 destination)
+    {
+        float _elapsedTime = 0f;
+        bool _isJumpEnd = false;
+        int posX = (int)Math.Abs(log.transform.position.x - 7.5f - destination.x) / 5 + 1;
+
+        Vector3 _startPosA = transform.position;
+        Vector3 _startPosB = vertex1;
+        Vector3 _destPosA = vertex2;
+        Vector3 _destPosB;
+        if (log.MoveDir == true) // x축 + 방향
+        {
+            _destPosB = new Vector3(log.transform.position.x - 7.5f + 5 * posX  + durationTime * log.MoveSpeed - 2.5f, log.transform.position.y, log.transform.position.z);
+        }
+        else
+        {
+            _destPosB = new Vector3(log.transform.position.x - 7.5f + 5 * posX - durationTime * log.MoveSpeed - 2.5f, log.transform.position.y, log.transform.position.z);
+        }
+
+        while (_isJumpEnd == false)
+        {
+            _elapsedTime += Time.deltaTime;
+            
+            if (_elapsedTime >= durationTime)
+            {
+                _elapsedTime = durationTime;
+                _isJumpEnd = true;
+            }
+
+            transform.position = BezierCurve.Bezier(_startPosA, _startPosB, _destPosA, _destPosB, _elapsedTime, durationTime);
+
+            yield return null;
+        }
+        _isLogLeftToRight = log.MoveDir;
+        _floatingLogSpeed = log.MoveSpeed;
+        _isJump = false;
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        // 죽는 처리
         if (collision.gameObject.layer == LayerName.MOVE_OBSTACLE)
         {
-            Debug.Log("GameOver");
             GameManager.Instance.OnPlayerDead();
+            this.gameObject.SetActive(false);
         }
     }
 

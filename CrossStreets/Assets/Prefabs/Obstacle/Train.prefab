@@ -1626,6 +1626,7 @@ GameObject:
   - component: {fileID: 8614832862473422795}
   - component: {fileID: 3562213760862666678}
   - component: {fileID: 5874844214337748442}
+  - component: {fileID: 2894038088772156888}
   m_Layer: 7
   m_Name: Train
   m_TagString: Untagged
@@ -1677,6 +1678,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 80, y: 6, z: 4}
   m_Center: {x: 0, y: 3, z: 0}
+--- !u!54 &2894038088772156888
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2589594529040830976}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2617853339089023781
 GameObject:
   m_ObjectHideFlags: 0

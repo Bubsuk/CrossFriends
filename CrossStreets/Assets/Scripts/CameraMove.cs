@@ -40,11 +40,10 @@ public class CameraMove : MonoBehaviour
             transform.position += Vector3.forward * _moveSpeed * Time.deltaTime;
         }
 
-        //if (/*플레이어 입력 이벤트로 받기 */ Mathf.Abs(transform.position.x - _player.transform.position.x) > 0.5f)
-        //{ 
-        //    _playerCon.OnInputKey += CamHorizontalMove;
-        //    _horizontalCoroutine = StartCoroutine(ReviseHorizonCamPos());
-        //}
+        if(_player.transform.position.z < transform.position.z - 1f)
+        {
+            GameManager.Instance.OnPlayerDead();
+        }
     }
 
     IEnumerator ReviseHorizonCamPos()

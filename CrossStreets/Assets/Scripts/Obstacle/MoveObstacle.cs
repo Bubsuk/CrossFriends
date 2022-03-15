@@ -21,6 +21,7 @@ public class MoveObstacle : MonoBehaviour
     }
     public bool MoveDir
     {
+        get { return _isLeftToRight; }
         set { _isLeftToRight = value; }
     }
     private ObstacleType _type;

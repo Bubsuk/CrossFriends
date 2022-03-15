@@ -10,56 +10,61 @@ public static class ObstacleMaker
     {
         int[] _hasObstacle = new int[20];
 
-        if (CanGoThrough(prevTile, _randObstacleCode) == true)
+        while(true)
         {
-            int shiftCompare = 1;
-            for (int i = 0; i < 20; ++i)
+            if (CanGoThrough(prevTile, _randObstacleCode) == true)
             {
-                if ((0 <= i && i < 5) || (15 <= i && i < 20))
+                int shiftCompare = 1;
+                for (int i = 0; i < 20; ++i)
                 {
-                    _hasObstacle[i] = 1;
-                }
-                else
-                {
-                    switch (type)
+                    if ((0 <= i && i < 5) || (15 <= i && i < 20))
                     {
-                        case TileType.Grass:
-                            if ((_randObstacleCode & shiftCompare) != 0)
-                            {
-                                _hasObstacle[i] = 1;
-                            }
-                            else
-                            {
-                                _hasObstacle[i] = 0;
-                            }
-                            break;
-                        case TileType.DarkGrass:
-                            if ((_randObstacleCode & shiftCompare) != 0)
-                            {
-                                _hasObstacle[i] = 1;
-                            }
-                            else
-                            {
-                                _hasObstacle[i] = 0;
-                            }
-                            break;
-                        default:
-                            _hasObstacle[i] = 0;
-                            break;
+                        _hasObstacle[i] = 1;
                     }
-                    if(i > 4)
+                    else
                     {
-                        shiftCompare <<= 1;
+                        switch (type)
+                        {
+                            case TileType.Grass:
+                                if ((_randObstacleCode & shiftCompare) != 0)
+                                {
+                                    _hasObstacle[i] = 1;
+                                }
+                                else
+                                {
+                                    _hasObstacle[i] = 0;
+                                }
+                                break;
+                            case TileType.DarkGrass:
+                                if ((_randObstacleCode & shiftCompare) != 0)
+                                {
+                                    _hasObstacle[i] = 1;
+                                }
+                                else
+                                {
+                                    _hasObstacle[i] = 0;
+                                }
+                                break;
+                            default:
+                                _hasObstacle[i] = 0;
+                                break;
+                        }
+                        if (i > 4)
+                        {
+                            shiftCompare <<= 1;
+                        }
+
                     }
-                    
+
                 }
-                
+                break;
+            }
+            else
+            {
+                _randObstacleCode = RandomTenBinaryDigitsGenerator(4);
             }
         }
-        else
-        {
-            return null;
-        }
+        
         
         return _hasObstacle;
 
