@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
 
     private bool _isGameOver = false;
+    public bool _isGameStart = false;
     private int _score = 0;
 
     public bool IsGameOver
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
         }
 
     }
+
 
     public void AddScore()
     {

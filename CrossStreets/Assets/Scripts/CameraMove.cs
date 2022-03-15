@@ -7,8 +7,7 @@ public class CameraMove : MonoBehaviour
     public bool _isMove = false;
     [SerializeField]
     private GameObject _player;
-    [SerializeField]
-    private float _moveSpeed = 3f;
+    private float _moveSpeed = 1f;
     [SerializeField]
     private PlayerController _playerCon;
 
@@ -31,6 +30,10 @@ public class CameraMove : MonoBehaviour
 
     void Update()
     {
+        if(GameManager.Instance._isGameStart == false)
+        {
+            return;
+        }
         if (_player.transform.position.z > transform.position.z + 8f)
         {
             _verticalCoroutine = StartCoroutine(ReviseVerticalCamPos());
@@ -43,6 +46,11 @@ public class CameraMove : MonoBehaviour
         if(_player.transform.position.z < transform.position.z - 1f)
         {
             GameManager.Instance.OnPlayerDead();
+        }
+
+        if(GameManager.Instance.IsGameOver == true)
+        {
+            _moveSpeed = 0f;
         }
     }
 

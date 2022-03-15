@@ -35,7 +35,8 @@ public class PlayerController : MonoBehaviour
 
     public event Action OnInputKey = null;
 
-    private int _score = 0;
+    public int _score = 0;
+    public int _highScore = 0;
 
     void Start()
     {
@@ -123,14 +124,15 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if(GameManager.Instance.IsGameOver == false)
+        if(GameManager.Instance.IsGameOver == false && (-25f < transform.position.x && transform.position.x < 25f))
         {
-            if (Input.GetKeyDown(KeyCode.W) && _isJump == false)
+            if (Input.GetKeyDown(KeyCode.W) && _isJump == false )
             {
                 bool result = false;
                 bool logJump = false;
                 GameObject rayedTile;
                 MoveObstacle floatingLog = null;
+                GameManager.Instance._isGameStart = true;
 
                 _dir = PlayerDir.Forward;
                 if (_saveDir == PlayerDir.Back)
@@ -144,12 +146,17 @@ public class PlayerController : MonoBehaviour
                         }
                         _isOnLog = false;
                         result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
+                        {
+                            ++_score;
+                        }
                     }
                     if (rayedTile.layer == LayerName.FLOATING_LOG)
                     {
                         _isOnLog = true;
                         floatingLog = rayedTile.GetComponent<MoveObstacle>();
                         logJump = true;
+                        ++_score;
                     }
                 }
                 else if (_saveDir == PlayerDir.Left)
@@ -163,12 +170,17 @@ public class PlayerController : MonoBehaviour
                         }
                         _isOnLog = false;
                         result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
+                        {
+                            ++_score;
+                        }
                     }
                     if (rayedTile.layer == LayerName.FLOATING_LOG)
                     {
                         _isOnLog = true;
                         floatingLog = rayedTile.GetComponent<MoveObstacle>();
                         logJump = true;
+                        ++_score;
                     }
                 }
 
@@ -183,12 +195,18 @@ public class PlayerController : MonoBehaviour
                         }
                         _isOnLog = false;
                         result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                        if(rayedTile.GetComponent<TileLine>().Type != TileType.Water)
+                        {
+                            ++_score;
+                        }
+                        
                     }
                     if (rayedTile.layer == LayerName.FLOATING_LOG)
                     {
                         _isOnLog = true;
                         floatingLog = rayedTile.GetComponent<MoveObstacle>();
                         logJump = true;
+                        ++_score;
                     }
 
                 }
@@ -203,12 +221,18 @@ public class PlayerController : MonoBehaviour
                         }
                         _isOnLog = false;
                         result = IsCanMove(rayedTile.GetComponent<TileLine>());
+
+                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
+                        {
+                            ++_score;
+                        }
                     }
                     if (rayedTile.layer == LayerName.FLOATING_LOG)
                     {
                         _isOnLog = true;
                         floatingLog = rayedTile.GetComponent<MoveObstacle>();
                         logJump = true;
+                        ++_score;
                     }
                 }
 
@@ -228,8 +252,6 @@ public class PlayerController : MonoBehaviour
                     OnInputKey.Invoke();
                     _saveDir = _dir;
                 }
-
-
             }
 
             if (Input.GetKeyDown(KeyCode.S) && _isJump == false)
@@ -238,6 +260,7 @@ public class PlayerController : MonoBehaviour
                 bool logJump = false;
                 GameObject rayedTile;
                 MoveObstacle floatingLog = null;
+                GameManager.Instance._isGameStart = true;
 
                 _dir = PlayerDir.Back;
                 if (_saveDir == PlayerDir.Back)
@@ -251,12 +274,17 @@ public class PlayerController : MonoBehaviour
                         }
                         _isOnLog = false;
                         result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
+                        {
+                            --_score;
+                        }
                     }
                     if (rayedTile.layer == LayerName.FLOATING_LOG)
                     {
                         _isOnLog = true;
                         floatingLog = rayedTile.GetComponent<MoveObstacle>();
                         logJump = true;
+                        --_score;
                     }
                 }
                 else if (_saveDir == PlayerDir.Left)
@@ -270,12 +298,19 @@ public class PlayerController : MonoBehaviour
                         }
                         _isOnLog = false;
                         result = IsCanMove(rayedTile.GetComponent<TileLine>());
+
+                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
+                        {
+                            --_score;
+                        }
                     }
                     if (rayedTile.layer == LayerName.FLOATING_LOG)
                     {
                         _isOnLog = true;
                         floatingLog = rayedTile.GetComponent<MoveObstacle>();
                         logJump = true;
+
+                        --_score;
                     }
                 }
                 else if (_saveDir == PlayerDir.Right)
@@ -289,12 +324,19 @@ public class PlayerController : MonoBehaviour
                         }
                         _isOnLog = false;
                         result = IsCanMove(rayedTile.GetComponent<TileLine>());
+
+                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
+                        {
+                            --_score;
+                        }
                     }
                     if (rayedTile.layer == LayerName.FLOATING_LOG)
                     {
                         _isOnLog = true;
                         floatingLog = rayedTile.GetComponent<MoveObstacle>();
                         logJump = true;
+
+                        --_score;
                     }
                 }
                 else
@@ -308,12 +350,17 @@ public class PlayerController : MonoBehaviour
                         }
                         _isOnLog = false;
                         result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
+                        {
+                            --_score;
+                        }
                     }
                     if (rayedTile.layer == LayerName.FLOATING_LOG)
                     {
                         _isOnLog = true;
                         floatingLog = rayedTile.GetComponent<MoveObstacle>();
                         logJump = true;
+                        --_score;
                     }
                 }
                 if (result)
@@ -340,6 +387,7 @@ public class PlayerController : MonoBehaviour
                 bool logJump = false;
                 GameObject rayedTile;
                 MoveObstacle floatingLog = null;
+                GameManager.Instance._isGameStart = true;
 
                 _dir = PlayerDir.Left;
 
@@ -444,6 +492,7 @@ public class PlayerController : MonoBehaviour
                 bool logJump = false;
                 GameObject rayedTile;
                 MoveObstacle floatingLog = null;
+                GameManager.Instance._isGameStart = true;
 
                 _dir = PlayerDir.Right;
 
@@ -545,7 +594,10 @@ public class PlayerController : MonoBehaviour
             }
         }
        
-
+        if(_score >= _highScore)
+        {
+            _highScore = _score;
+        }
         
     }
    
