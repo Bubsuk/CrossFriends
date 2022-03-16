@@ -43,70 +43,14 @@ public class PlayerController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-  
-
-    bool IsCanMove(TileLine tile)
+    private void OnCollisionEnter(Collision collision)
     {
-        switch (tile.gameObject.layer)
+        if (collision.gameObject.layer == LayerName.MOVE_OBSTACLE)
         {
-            case LayerName.OBSTACLE:
-                return false;
-            case LayerName.MOVE_OBSTACLE:
-                return true;
-            case LayerName.FLOATING_LOG:
-                return true;
-            case LayerName.TILE_LINE:
-                return true;
-            default:
-                return false;
+            GameManager.Instance.OnPlayerDead();
+            transform.localScale = new Vector3(transform.localScale.x, 0.1f, transform.localScale.z);
         }
     }
-
-    GameObject DetectTile(PlayerDir dir)
-    {
-        RaycastHit hit;
-        GameObject tempTileLine;
-        float maxDistance = 20f;
-
-        switch (dir)
-        {
-            case PlayerDir.Forward:
-                if (Physics.Raycast(_frontDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_frontDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    tempTileLine = hit.transform.gameObject;
-                    return tempTileLine;
-                }
-                break;
-            case PlayerDir.Back:
-                if (Physics.Raycast(_rearDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_rearDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    tempTileLine = hit.transform.gameObject;
-                    return tempTileLine;
-                }
-                break;
-            case PlayerDir.Right:
-                if (Physics.Raycast(_rightDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_rightDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    tempTileLine = hit.transform.gameObject;
-                    return tempTileLine;
-                }
-                break;
-            case PlayerDir.Left:
-                if (Physics.Raycast(_leftDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_leftDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    tempTileLine = hit.transform.gameObject;
-                    return tempTileLine;
-                }
-                break;
-        }
-
-        return null;
-    }
-
 
     void Update()
     {
@@ -122,6 +66,11 @@ public class PlayerController : MonoBehaviour
             {
                 transform.position -= Vector3.right * _floatingLogSpeed * Time.deltaTime;
             }
+        }
+
+        if(-25f > transform.position.x || transform.position.x > 25f)
+        {
+            GameManager.Instance.IsGameOver = true;
         }
 
         if(GameManager.Instance.IsGameOver == false && (-25f < transform.position.x && transform.position.x < 25f))
@@ -142,6 +91,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().isTrigger = true;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -166,6 +116,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().isTrigger = true;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -191,6 +142,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().isTrigger = true;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -217,6 +169,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().isTrigger = true;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -270,6 +223,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -294,6 +248,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -320,6 +275,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -346,6 +302,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -374,8 +331,8 @@ public class PlayerController : MonoBehaviour
                 if (logJump)
                 {
                     _isJump = true;
-                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
-                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
+                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
                     OnInputKey.Invoke();
                     _saveDir = _dir;
                 }
@@ -393,11 +350,12 @@ public class PlayerController : MonoBehaviour
 
                 if (_saveDir == PlayerDir.Back)
                 {
-                    rayedTile = DetectTile(PlayerDir.Left);
+                    rayedTile = DetectTile(PlayerDir.Right);
                     if (rayedTile.GetComponent<TileLine>() != null)
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -417,6 +375,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -436,6 +395,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -455,6 +415,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -480,8 +441,8 @@ public class PlayerController : MonoBehaviour
                 if (logJump)
                 {
                     _isJump = true;
-                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
-                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
+                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
                     OnInputKey.Invoke();
                     _saveDir = _dir;
                 }
@@ -503,6 +464,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -522,6 +484,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -541,6 +504,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -560,6 +524,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                         {
+                            GetComponent<Collider>().enabled = false;
                             GameManager.Instance.OnPlayerDead();
                         }
                         _isOnLog = false;
@@ -586,8 +551,8 @@ public class PlayerController : MonoBehaviour
                 if (logJump)
                 {
                     _isJump = true;
-                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
-                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
+                    _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
+                    StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
                     OnInputKey.Invoke();
                     _saveDir = _dir;
                 }
@@ -600,7 +565,9 @@ public class PlayerController : MonoBehaviour
         }
         
     }
-   
+
+  
+
 
     IEnumerator PlayerTurn(PlayerDir dir, float durationTime)
     {
@@ -695,13 +662,67 @@ public class PlayerController : MonoBehaviour
         _isJump = false;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    bool IsCanMove(TileLine tile)
     {
-        if (collision.gameObject.layer == LayerName.MOVE_OBSTACLE)
+        switch (tile.gameObject.layer)
         {
-            GameManager.Instance.OnPlayerDead();
-            this.gameObject.SetActive(false);
+            case LayerName.OBSTACLE:
+                return false;
+            case LayerName.MOVE_OBSTACLE:
+                return true;
+            case LayerName.FLOATING_LOG:
+                return true;
+            case LayerName.TILE_LINE:
+                return true;
+            default:
+                return false;
         }
     }
+
+    GameObject DetectTile(PlayerDir dir)
+    {
+        RaycastHit hit;
+        GameObject tempTileLine;
+        float maxDistance = 20f;
+
+        switch (dir)
+        {
+            case PlayerDir.Forward:
+                if (Physics.Raycast(_frontDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_frontDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    tempTileLine = hit.transform.gameObject;
+                    return tempTileLine;
+                }
+                break;
+            case PlayerDir.Back:
+                if (Physics.Raycast(_rearDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_rearDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    tempTileLine = hit.transform.gameObject;
+                    return tempTileLine;
+                }
+                break;
+            case PlayerDir.Right:
+                if (Physics.Raycast(_rightDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_rightDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    tempTileLine = hit.transform.gameObject;
+                    return tempTileLine;
+                }
+                break;
+            case PlayerDir.Left:
+                if (Physics.Raycast(_leftDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
+                {
+                    Debug.DrawRay(_leftDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+                    tempTileLine = hit.transform.gameObject;
+                    return tempTileLine;
+                }
+                break;
+        }
+
+        return null;
+    }
+
 
 }

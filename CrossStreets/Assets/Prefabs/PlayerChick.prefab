@@ -1155,6 +1155,8 @@ MonoBehaviour:
   _rearDetector: {fileID: 0}
   _leftDetector: {fileID: 0}
   _rightDetector: {fileID: 0}
+  _score: 0
+  _highScore: 0
 --- !u!65 &6660345357326941552
 BoxCollider:
   m_ObjectHideFlags: 0
