@@ -1085,8 +1085,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3838489671411972174}
   - component: {fileID: 105757319351853102}
-  - component: {fileID: 105757319351853101}
   - component: {fileID: 6660345357326941552}
+  - component: {fileID: 105757319351853101}
+  - component: {fileID: 8830120462494645163}
   m_Layer: 0
   m_Name: PlayerChick
   m_TagString: Untagged
@@ -1136,27 +1137,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &105757319351853101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6570210792321545998}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afb8380316246174886d0880b7771d80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rotateTime: 0.2
-  _jumpTime: 0.2
-  _destroyZone: {fileID: 0}
-  _frontDetector: {fileID: 0}
-  _rearDetector: {fileID: 0}
-  _leftDetector: {fileID: 0}
-  _rightDetector: {fileID: 0}
-  _score: 0
-  _highScore: 0
 --- !u!65 &6660345357326941552
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1170,6 +1150,41 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.38, y: 1.79, z: 1.47}
   m_Center: {x: 0, y: 1.46, z: 0.2}
+--- !u!114 &105757319351853101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6570210792321545998}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afb8380316246174886d0880b7771d80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rotateTime: 0.2
+  _jumpTime: 0.2
+  _destroyZone: {fileID: 0}
+  _score: 0
+  _highScore: 0
+--- !u!114 &8830120462494645163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6570210792321545998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23afcc9a8fd4079418b63758673e3589, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _swipeRange: 0
+  _rotateTime: 1
+  _jumpTime: 1
+  _destroyZone: {fileID: 0}
+  _score: 0
+  _highScore: 0
 --- !u!1 &6727197688573516650
 GameObject:
   m_ObjectHideFlags: 0

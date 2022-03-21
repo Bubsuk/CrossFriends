@@ -308,8 +308,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 3.2999878}
-  m_SizeDelta: {x: 321, y: 47.7}
+  m_AnchoredPosition: {x: 0, y: -14.200012}
+  m_SizeDelta: {x: 325.19, y: 111.66}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &378648452
 MonoBehaviour:
@@ -348,16 +348,16 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 29
+    m_FontSize: 88
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 50
+    m_MaxSize: 134
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: Score 0
 --- !u!222 &378648454
@@ -489,7 +489,7 @@ RectTransform:
   m_GameObject: {fileID: 720923840}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.43, y: 3.9, z: 1}
   m_Children:
   - {fileID: 1247920163}
   m_Father: {fileID: 1799557130}
@@ -497,7 +497,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -50.7}
+  m_AnchoredPosition: {x: 0, y: -154.16}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &720923842
@@ -663,7 +663,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3838489671411972174, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3838489671411972174, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -745,6 +745,26 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8830120462494645163, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
+      propertyPath: _jumpTime
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8830120462494645163, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
+      propertyPath: _tapRange
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8830120462494645163, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
+      propertyPath: _rotateTime
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8830120462494645163, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
+      propertyPath: _swipeRange
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 8830120462494645163, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
+      propertyPath: _destroyZone
+      value: 
+      objectReference: {fileID: 320720279}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
 --- !u!1 &963194225
@@ -801,7 +821,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 8.5
+  orthographic size: 17
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -824,8 +844,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.4271303, y: 0.12365896, z: -0.05899816, w: -0.8937491}
-  m_LocalPosition: {x: 5.167774, y: 14.805325, z: -2.5541086}
+  m_LocalRotation: {x: 0.3718069, y: -0.12045982, z: 0.048176363, w: 0.91919976}
+  m_LocalPosition: {x: 6.1534925, y: 26.921497, z: -8.332387}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -845,7 +865,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _isMove: 0
   _player: {fileID: 1703565200}
-  _moveSpeed: 0
+  _moveSpeed: 1
   _playerCon: {fileID: 1703565201}
 --- !u!1 &1247920162
 GameObject:
@@ -988,9 +1008,20 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 754337140}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1703565200}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: afb8380316246174886d0880b7771d80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1703565203 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8830120462494645163, guid: ce788ea9d5bf55c4fa84045f42f9642d, type: 3}
+  m_PrefabInstance: {fileID: 754337140}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1703565200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23afcc9a8fd4079418b63758673e3589, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1779699354 stripped
@@ -1035,7 +1066,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 450, y: 100}
+  m_SizeDelta: {x: 499.3, y: 140.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1799557131
 MonoBehaviour:
@@ -1074,16 +1105,16 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 35
+    m_FontSize: 144
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 50
+    m_MaxSize: 144
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: YOU DIED
 --- !u!222 &1799557133
@@ -1216,7 +1247,7 @@ MonoBehaviour:
   _score: {fileID: 378648453}
   _topScore: {fileID: 2111860090}
   GameOverUI: {fileID: 1799557129}
-  _player: {fileID: 1703565201}
+  _player: {fileID: 1703565203}
 --- !u!1 &2089355679
 GameObject:
   m_ObjectHideFlags: 0
@@ -1318,8 +1349,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -30.300018}
-  m_SizeDelta: {x: 321, y: 47.7}
+  m_AnchoredPosition: {x: 0, y: -61.41}
+  m_SizeDelta: {x: 321, y: 136.4}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2111860089
 MonoBehaviour:
@@ -1358,16 +1389,16 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 17
+    m_FontSize: 65
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 50
+    m_MaxSize: 73
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: TOP 0
 --- !u!222 &2111860091

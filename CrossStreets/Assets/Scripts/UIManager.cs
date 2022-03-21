@@ -13,9 +13,10 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject GameOverUI;
 
+    //[SerializeField]
+    //PlayerController _player;
     [SerializeField]
-    PlayerController _player;
-    
+    TouchInput _player;
 
     Button _button;
 
@@ -28,7 +29,12 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        PlayerPrefs.SetInt("BestScore", _player._highScore);
+        if(_bestScore <= _player._highScore )
+        {
+            PlayerPrefs.SetInt("BestScore", _player._highScore);
+            _bestScore = _player._highScore;
+        }
+        
         
         _score.text = $"Score {_player._highScore}";
         _topScore.text = $"Top {_bestScore}";
@@ -37,6 +43,8 @@ public class UIManager : MonoBehaviour
         {
             GameOverUI.gameObject.SetActive(true);
         }
+
+ 
     }
 
     public void GameRestart()

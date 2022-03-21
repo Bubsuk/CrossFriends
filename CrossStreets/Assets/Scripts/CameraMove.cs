@@ -17,19 +17,20 @@ public class CameraMove : MonoBehaviour
 
     bool _isRevisingVerticalCam = false;
     bool _isRevisingHorizonCam = false;
-    private void Awake()
-    {
-        _playerCon.OnInputKey -= CamHorizontalMove;
-        _playerCon.OnInputKey += CamHorizontalMove;
-    }
+    //private void Awake()
+    //{
+    //    _playerCon.OnInputKey -= CamHorizontalMove;
+    //    _playerCon.OnInputKey += CamHorizontalMove;
+    //}
 
-    void CamHorizontalMove()
-    {
-        if (Mathf.Abs(transform.position.x - _player.transform.position.x) > 0.5f)
-        {
-            _horizontalCoroutine = StartCoroutine(ReviseHorizonCamPos());
-        }
-    }
+    //void CamHorizontalMove()
+    //{
+    //    if (Mathf.Abs(transform.position.x - _player.transform.position.x) > 0.5f && _isRevisingHorizonCam == false)
+    //    {
+    //        _isRevisingHorizonCam = true;
+    //        _horizontalCoroutine = StartCoroutine(ReviseHorizonCamPos());
+    //    }
+    //}
 
     void Update()
     {
@@ -53,7 +54,7 @@ public class CameraMove : MonoBehaviour
             _isRevisingHorizonCam = true;
         }
 
-        if (_player.transform.position.z < transform.position.z - 3f)
+        if (_player.transform.position.z < transform.position.z)
         {
             GameManager.Instance.OnPlayerDead();
         }
@@ -109,27 +110,25 @@ public class CameraMove : MonoBehaviour
         float _elapsedTime = 0f;
         float _durationTime = 2f;
 
-        bool _isRotaed = false;
+        bool _isRivised = false;
 
-        Vector3 _startA = transform.position + new Vector3(0, 1, 0);
         Vector3 _startCam = transform.position;
 
-        while (_isRotaed == false)
+        while (_isRivised == false)
         {
             _elapsedTime += Time.deltaTime;
 
             if (_elapsedTime >= _durationTime)
             {
                 _elapsedTime = _durationTime;
-                _isRotaed = true;
+                _isRivised = true;
             }
 
             transform.position = new Vector3(transform.position.x, transform.position.y, BezierCurve.ReviseCam(_startCam,
-                _player.transform.position, _player.transform.position + new Vector3(0, 5f, -2.5f), _elapsedTime, _durationTime).z);
+                _player.transform.position + new Vector3(0f, 0f, -7f), _player.transform.position + new Vector3(0f, 7f, -7f), _elapsedTime, _durationTime).z);
             yield return null;
         }
 
-     
         _horizontalCoroutine = null;
         _isRevisingVerticalCam = false;
     }

@@ -341,21 +341,13 @@ public class MapConstructor : MonoBehaviour
                     _startTile[i]._prevTileLine = _startTile[i - 1];
                     _startTile[i]._obstacleCode = ObstacleMaker.RandomTenBinaryDigitsGenerator(_obstacleMaxAmt);
                     _startTile[i]._tileObstacle = ObstacleMaker.RandomObstacleArr(TileType.Grass, _startTile[i]._prevTileLine, _startTile[i]._obstacleCode);
+                    if (i == 4)
+                    {
+                        _startTile[i]._tileObstacle[9] = 0;
+                        _startTile[i]._tileObstacle[10] = 0;
+                        _startTile[i]._tileObstacle[11] = 0;
+                    }
                     ArrangeTree(_startTile[i]);
-                }
-                else if(i == 3)
-                {
-                    _startTile[i] = _tileObjQueue[TileType.DarkGrass].GetTile();
-                    _startTile[i].transform.position = new Vector3(0, 0, -10 + (i * _tileSize));
-                    _startTile[i].gameObject.SetActive(true);
-                    _startTile[i]._prevTileLine = _startTile[i - 1];
-                    _startTile[i]._obstacleCode = ObstacleMaker.RandomTenBinaryDigitsGenerator(_obstacleMaxAmt);
-                    _startTile[i]._tileObstacle = ObstacleMaker.RandomObstacleArr(TileType.Grass, _startTile[i]._prevTileLine, _startTile[i]._obstacleCode);
-                    _startTile[i]._tileObstacle[9] = 0;
-                    _startTile[i]._tileObstacle[10] = 0;
-                    _startTile[i]._tileObstacle[11] = 0;
-                    ArrangeTree(_startTile[i]);
-                    
                 }
                 else
                 {
@@ -365,6 +357,12 @@ public class MapConstructor : MonoBehaviour
                     _startTile[i]._prevTileLine = _startTile[i - 1];
                     _startTile[i]._obstacleCode = ObstacleMaker.RandomTenBinaryDigitsGenerator(_obstacleMaxAmt);
                     _startTile[i]._tileObstacle = ObstacleMaker.RandomObstacleArr(TileType.Grass, _startTile[i]._prevTileLine, _startTile[i]._obstacleCode);
+                    if (i == 5)
+                    {
+                        _startTile[i]._tileObstacle[9] = 0;
+                        _startTile[i]._tileObstacle[10] = 0;
+                        _startTile[i]._tileObstacle[11] = 0;
+                    }
                     ArrangeTree(_startTile[i]);
                 }
             }

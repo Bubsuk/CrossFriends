@@ -7,7 +7,6 @@ public class PlayerController : MonoBehaviour
 {
     private PlayerState _state = PlayerState.Idle;
     private PlayerDir _dir;
-    private PlayerDir _saveDir;
 
     private Rigidbody _rigidbody;
 
@@ -18,22 +17,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameObject _destroyZone;
 
-    [SerializeField]
-    private GameObject _frontDetector;
-    [SerializeField]
-    private GameObject _rearDetector;
-    [SerializeField]
-    private GameObject _leftDetector;
-    [SerializeField]
-    private GameObject _rightDetector;
-
     Coroutine _rotateCoroutine = null;
     private bool _isJump = false;
     private bool _isOnLog = false;
     private bool _isLogLeftToRight = false;
     private float _floatingLogSpeed = 0f;
 
-    public event Action OnInputKey = null;
 
     public int _score = 0;
     public int _highScore = 0;
@@ -41,15 +30,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.layer == LayerName.MOVE_OBSTACLE)
-        {
-            GameManager.Instance.OnPlayerDead();
-            transform.localScale = new Vector3(transform.localScale.x, 0.1f, transform.localScale.z);
-        }
     }
 
     void Update()
@@ -84,109 +64,29 @@ public class PlayerController : MonoBehaviour
                 GameManager.Instance._isGameStart = true;
 
                 _dir = PlayerDir.Forward;
-                if (_saveDir == PlayerDir.Back)
+
+                rayedTile = DetectTile(transform.position + new Vector3(0, 0, 4));
+
+                if (rayedTile.GetComponent<TileLine>() != null)
                 {
-                    rayedTile = DetectTile(PlayerDir.Back);
-                    if (rayedTile.GetComponent<TileLine>() != null)
+                    if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                     {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().isTrigger = true;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
-                        {
-                            ++_score;
-                        }
+                        GetComponent<Collider>().isTrigger = true;
+                        GameManager.Instance.OnPlayerDead();
                     }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    _isOnLog = false;
+                    result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
                     {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
                         ++_score;
                     }
                 }
-                else if (_saveDir == PlayerDir.Left)
+                if (rayedTile.layer == LayerName.FLOATING_LOG)
                 {
-                    rayedTile = DetectTile(PlayerDir.Right);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().isTrigger = true;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
-                        {
-                            ++_score;
-                        }
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                        ++_score;
-                    }
-                }
-
-                else if (_saveDir == PlayerDir.Right)
-                {
-                    rayedTile = DetectTile(PlayerDir.Left);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().isTrigger = true;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                        if(rayedTile.GetComponent<TileLine>().Type != TileType.Water)
-                        {
-                            ++_score;
-                        }
-                        
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                        ++_score;
-                    }
-
-                }
-                else
-                {
-                    rayedTile = DetectTile(PlayerDir.Forward);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().isTrigger = true;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-
-                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
-                        {
-                            ++_score;
-                        }
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                        ++_score;
-                    }
+                    _isOnLog = true;
+                    floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                    logJump = true;
+                    ++_score;
                 }
 
                 if (result)
@@ -194,17 +94,14 @@ public class PlayerController : MonoBehaviour
                     _isJump = true;
                     _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
                     StartCoroutine(PlayerJump(rayedTile.GetComponent<TileLine>(), _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
-                    OnInputKey.Invoke();
-                    _saveDir = _dir;
                 }
                 if (logJump)
                 {
                     _isJump = true;
                     _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Forward, _rotateTime));
                     StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, 1), transform.position + new Vector3(0, 3, 3), transform.position + new Vector3(0, 0, 4)));
-                    OnInputKey.Invoke();
-                    _saveDir = _dir;
                 }
+
             }
 
             if (Input.GetKeyDown(KeyCode.S) && _isJump == false)
@@ -216,125 +113,41 @@ public class PlayerController : MonoBehaviour
                 GameManager.Instance._isGameStart = true;
 
                 _dir = PlayerDir.Back;
-                if (_saveDir == PlayerDir.Back)
+                rayedTile = DetectTile(transform.position + new Vector3(0, 0, -4));
+
+                if (rayedTile.GetComponent<TileLine>() != null)
                 {
-                    rayedTile = DetectTile(PlayerDir.Forward);
-                    if (rayedTile.GetComponent<TileLine>() != null)
+                    if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                     {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
-                        {
-                            --_score;
-                        }
+                        GetComponent<Collider>().enabled = false;
+                        GameManager.Instance.OnPlayerDead();
                     }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
+                    _isOnLog = false;
+                    result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                    if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
                     {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
                         --_score;
                     }
                 }
-                else if (_saveDir == PlayerDir.Left)
+                if (rayedTile.layer == LayerName.FLOATING_LOG)
                 {
-                    rayedTile = DetectTile(PlayerDir.Left);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-
-                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
-                        {
-                            --_score;
-                        }
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-
-                        --_score;
-                    }
+                    _isOnLog = true;
+                    floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                    logJump = true;
+                    --_score;
                 }
-                else if (_saveDir == PlayerDir.Right)
-                {
-                    rayedTile = DetectTile(PlayerDir.Right);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
 
-                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
-                        {
-                            --_score;
-                        }
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-
-                        --_score;
-                    }
-                }
-                else
-                {
-                    rayedTile = DetectTile(PlayerDir.Back);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                        if (rayedTile.GetComponent<TileLine>().Type != TileType.Water)
-                        {
-                            --_score;
-                        }
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                        --_score;
-                    }
-                }
                 if (result)
                 {
                     _isJump = true;
                     _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
                     StartCoroutine(PlayerJump(rayedTile.GetComponent<TileLine>(), _jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
-                    OnInputKey.Invoke();
-                    _saveDir = _dir;
                 }
                 if (logJump)
                 {
                     _isJump = true;
                     _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Back, _rotateTime));
                     StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(0, 3, -1), transform.position + new Vector3(0, 3, -3), transform.position + new Vector3(0, 0, -4)));
-                    OnInputKey.Invoke();
-                    _saveDir = _dir;
                 }
             }
 
@@ -347,95 +160,30 @@ public class PlayerController : MonoBehaviour
                 GameManager.Instance._isGameStart = true;
 
                 _dir = PlayerDir.Left;
+                rayedTile = DetectTile(transform.position + new Vector3(-5, 0, 0));
 
-                if (_saveDir == PlayerDir.Back)
+                if (rayedTile.GetComponent<TileLine>() != null)
                 {
-                    rayedTile = DetectTile(PlayerDir.Right);
-                    if (rayedTile.GetComponent<TileLine>() != null)
+                    if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                     {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                        GetComponent<Collider>().enabled = false;
+                        GameManager.Instance.OnPlayerDead();
                     }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                    }
+                    _isOnLog = false;
+                    result = IsCanMove(rayedTile.GetComponent<TileLine>());
                 }
-                else if (_saveDir == PlayerDir.Left)
+                if (rayedTile.layer == LayerName.FLOATING_LOG)
                 {
-                    rayedTile = DetectTile(PlayerDir.Forward);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                    }
-                }
-                else if (_saveDir == PlayerDir.Right)
-                {
-                    rayedTile = DetectTile(PlayerDir.Back);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                    }
-                }
-                else
-                {
-                    rayedTile = DetectTile(PlayerDir.Left);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                    }
+                    _isOnLog = true;
+                    floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                    logJump = true;
                 }
 
-                if (result)
+                if (result && (transform.position.x + -5f > -25f))
                 {
                     _isJump = true;
                     _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
                     StartCoroutine(PlayerJump(rayedTile.GetComponent<TileLine>(), _jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
-                    OnInputKey.Invoke();
-                    _saveDir = _dir;
                 }
 
                 if (logJump)
@@ -443,8 +191,6 @@ public class PlayerController : MonoBehaviour
                     _isJump = true;
                     _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Left, _rotateTime));
                     StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(-1, 3, 0), transform.position + new Vector3(-3, 3, 0), transform.position + new Vector3(-5, 0, 0)));
-                    OnInputKey.Invoke();
-                    _saveDir = _dir;
                 }
             }
             if (Input.GetKeyDown(KeyCode.D) && _isJump == false)
@@ -456,96 +202,30 @@ public class PlayerController : MonoBehaviour
                 GameManager.Instance._isGameStart = true;
 
                 _dir = PlayerDir.Right;
+                rayedTile = DetectTile(transform.position + new Vector3(5, 0, 0));
 
-                if (_saveDir == PlayerDir.Back)
+                if (rayedTile.GetComponent<TileLine>() != null)
                 {
-                    rayedTile = DetectTile(PlayerDir.Left);
-                    if (rayedTile.GetComponent<TileLine>() != null)
+                    if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
                     {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
+                        GetComponent<Collider>().enabled = false;
+                        GameManager.Instance.OnPlayerDead();
                     }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                    }
+                    _isOnLog = false;
+                    result = IsCanMove(rayedTile.GetComponent<TileLine>());
                 }
-                else if (_saveDir == PlayerDir.Left)
+                if (rayedTile.layer == LayerName.FLOATING_LOG)
                 {
-                    rayedTile = DetectTile(PlayerDir.Back);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                    }
-                }
-                else if (_saveDir == PlayerDir.Right)
-                {
-                    rayedTile = DetectTile(PlayerDir.Forward);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                    }
-                }
-                else
-                {
-                    rayedTile = DetectTile(PlayerDir.Right);
-                    if (rayedTile.GetComponent<TileLine>() != null)
-                    {
-                        if (rayedTile.GetComponent<TileLine>().Type == TileType.Water)
-                        {
-                            GetComponent<Collider>().enabled = false;
-                            GameManager.Instance.OnPlayerDead();
-                        }
-                        _isOnLog = false;
-                        result = IsCanMove(rayedTile.GetComponent<TileLine>());
-                    }
-                    if (rayedTile.layer == LayerName.FLOATING_LOG)
-                    {
-                        _isOnLog = true;
-                        floatingLog = rayedTile.GetComponent<MoveObstacle>();
-                        logJump = true;
-                    }
+                    _isOnLog = true;
+                    floatingLog = rayedTile.GetComponent<MoveObstacle>();
+                    logJump = true;
                 }
 
-
-                if (result)
+                if (result && (transform.position.x + 5f < 25f))
                 {
                     _isJump = true;
                     _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
                     StartCoroutine(PlayerJump(rayedTile.GetComponent<TileLine>(), _jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
-                    OnInputKey.Invoke();
-                    _saveDir = _dir;
                 }
 
                 if (logJump)
@@ -553,8 +233,6 @@ public class PlayerController : MonoBehaviour
                     _isJump = true;
                     _rotateCoroutine = StartCoroutine(PlayerTurn(PlayerDir.Right, _rotateTime));
                     StartCoroutine(FloatingLogJump(floatingLog, _jumpTime, transform.position + new Vector3(1, 3, 0), transform.position + new Vector3(3, 3, 0), transform.position + new Vector3(5, 0, 0)));
-                    OnInputKey.Invoke();
-                    _saveDir = _dir;
                 }
             }
         }
@@ -566,8 +244,14 @@ public class PlayerController : MonoBehaviour
         
     }
 
-  
-
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerName.MOVE_OBSTACLE)
+        {
+            GameManager.Instance.OnPlayerDead();
+            transform.localScale = new Vector3(transform.localScale.x, 0.1f, transform.localScale.z);
+        }
+    }
 
     IEnumerator PlayerTurn(PlayerDir dir, float durationTime)
     {
@@ -678,51 +362,18 @@ public class PlayerController : MonoBehaviour
                 return false;
         }
     }
-
-    GameObject DetectTile(PlayerDir dir)
+    GameObject DetectTile(Vector3 rayDest)
     {
         RaycastHit hit;
         GameObject tempTileLine;
         float maxDistance = 20f;
 
-        switch (dir)
+        if (Physics.Raycast(rayDest + new Vector3(0, 10, 0), new Vector3(0, -1, 0), out hit, maxDistance))
         {
-            case PlayerDir.Forward:
-                if (Physics.Raycast(_frontDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_frontDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    tempTileLine = hit.transform.gameObject;
-                    return tempTileLine;
-                }
-                break;
-            case PlayerDir.Back:
-                if (Physics.Raycast(_rearDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_rearDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    tempTileLine = hit.transform.gameObject;
-                    return tempTileLine;
-                }
-                break;
-            case PlayerDir.Right:
-                if (Physics.Raycast(_rightDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_rightDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    tempTileLine = hit.transform.gameObject;
-                    return tempTileLine;
-                }
-                break;
-            case PlayerDir.Left:
-                if (Physics.Raycast(_leftDetector.transform.position, new Vector3(0, -1, 0), out hit, maxDistance))
-                {
-                    Debug.DrawRay(_leftDetector.transform.position, new Vector3(0, -1, 0) * 100f, Color.red, 1f);
-                    tempTileLine = hit.transform.gameObject;
-                    return tempTileLine;
-                }
-                break;
+            Debug.DrawRay(rayDest + new Vector3(0, 10, 0), new Vector3(0, -1, 0) * 100f, Color.red, 1f);
+            tempTileLine = hit.transform.gameObject;
+            return tempTileLine;
         }
-
         return null;
     }
-
-
 }
